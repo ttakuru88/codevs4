@@ -1,3 +1,7 @@
+%w(unit worker knight fighter assassin castle village base).each do |w|
+  require "#{__dir__}/#{w}.rb"
+end
+
 puts 'ttakuru88'
 
 loop do
@@ -13,7 +17,7 @@ loop do
   units = []
   units_count = gets.to_i
   units_count.times do |i|
-    units << gets
+    units << Unit.load(gets)
   end
 
   enemies = []
@@ -30,5 +34,5 @@ loop do
 
   gets
 
-  puts '0'
+  puts 0
 end

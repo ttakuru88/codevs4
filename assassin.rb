@@ -1,0 +1,2 @@
+class Assassin < Unit
+end

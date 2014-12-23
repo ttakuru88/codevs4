@@ -1,0 +1,2 @@
+class Village < Unit
+end

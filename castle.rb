@@ -1,0 +1,2 @@
+class Castle < Unit
+end
