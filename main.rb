@@ -23,7 +23,7 @@ loop do
   enemies = []
   enemies_count = gets.to_i
   enemies_count.times do |i|
-    enemies << gets
+    enemies << Unit.load(gets, true)
   end
 
   resources = []
