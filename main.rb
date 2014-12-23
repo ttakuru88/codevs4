@@ -33,5 +33,12 @@ loop do
 
   gets
 
-  puts 0
+  map.units.each do |unit|
+    unit.think
+  end
+
+  puts map.units.size
+  map.units.each do |unit|
+    puts "#{unit.id} #{unit.action_number}"
+  end
 end

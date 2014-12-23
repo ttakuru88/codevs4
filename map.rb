@@ -28,4 +28,9 @@ class Map
       self.map[unit.y][unit.x].units << unit
     end
   end
+
+  def add_resource(resource)
+    self.resources << resource
+    self.map[resource.y][resource.x].resources << resource
+  end
 end
