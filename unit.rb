@@ -29,4 +29,8 @@ class Unit
   def sight
     SIGHT
   end
+
+  def enemy?
+    !!enemy
+  end
 end

@@ -1,4 +1,4 @@
-%w(unit worker knight fighter assassin castle village base).each do |w|
+%w(cell map resource unit worker knight fighter assassin castle village base).each do |w|
   require "#{__dir__}/#{w}.rb"
 end
 
@@ -14,22 +14,21 @@ loop do
   turn  = gets.to_i
   all_resources_count = gets.to_i
 
-  units = []
+  map = Map.new
+
   units_count = gets.to_i
   units_count.times do |i|
-    units << Unit.load(gets)
+    map.add_unit Unit.load(gets)
   end
 
-  enemies = []
   enemies_count = gets.to_i
   enemies_count.times do |i|
-    enemies << Unit.load(gets, true)
+    map.add_unit Unit.load(gets, true)
   end
 
-  resources = []
   resources_count = gets.to_i
   resources_count.times do |i|
-    resources << gets
+    map.add_resource Resource.load(gets)
   end
 
   gets
