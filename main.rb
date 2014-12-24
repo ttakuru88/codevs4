@@ -33,9 +33,11 @@ loop do
 
   gets
 
-  map.units.each do |unit|
-    unit.think
+  map.workers.each_with_index do |worker, i|
+    worker.think(map, i)
   end
+
+  map.castle.think(map)
 
   puts map.units.size
   map.units.each do |unit|

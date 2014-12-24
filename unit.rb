@@ -32,7 +32,7 @@ class Unit
     ACTIONS[action]
   end
 
-  def think
+  def think(map)
   end
 
   def sight
