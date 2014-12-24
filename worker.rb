@@ -9,12 +9,15 @@ class Worker < Unit
       move_to(to_y, to_x)
     else
       target_resource = map.resources[index - 12]
-#      target_resource = map.resources.find do |resource|
-#        map.at(resource.y, resource.x).workers.size < 5
-#      end
 
       if target_resource
-        move_to(target_resource.y, target_resource.x)
+        if move_to(target_resource.y, target_resource.x)
+          if map.at(y, x).villages.size <= 0
+            self.action = :create_village
+          elsif map.at(y, x).bases.size <= 0
+            self.action = :create_base
+          end
+        end
       end
     end
   end

@@ -32,11 +32,18 @@ loop do
   resources_count.times do |i|
     map.add_resource Resource.load(gets)
   end
-  STDERR.puts "#{resources_count} #{map.resources.size}"
   gets
 
   map.workers.each_with_index do |worker, i|
     worker.think(map, i)
+  end
+
+  map.villages.each do |village|
+    village.think(map)
+  end
+
+  map.bases.each do |base|
+    base.think(map)
   end
 
   map.castle.think(map)

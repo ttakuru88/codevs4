@@ -14,4 +14,12 @@ class Cell
   def castle
     self.units.find { |u| u.instance_of?(Castle) }
   end
+
+  def villages
+    self.units.select { |u| u.instance_of?(Village) }
+  end
+
+  def bases
+    self.units.select { |u| u.instance_of?(Base) }
+  end
 end

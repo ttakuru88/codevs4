@@ -4,6 +4,8 @@ class Castle < Unit
   def think(map)
     if map.workers.size < 30
       self.action = :create_worker
+    else
+      self.action = :create_base
     end
   end
 end
