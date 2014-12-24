@@ -4,17 +4,19 @@ end
 
 puts 'ttakuru88'
 
+map = Map.new
+
 loop do
   STDOUT.flush
 
   ms = gets.to_i
   break if ms <= 0
 
+  map.turn_init
+
   stage = gets.to_i
   turn  = gets.to_i
   all_resources_count = gets.to_i
-
-  map = Map.new
 
   units_count = gets.to_i
   units_count.times do |i|
@@ -30,7 +32,7 @@ loop do
   resources_count.times do |i|
     map.add_resource Resource.load(gets)
   end
-
+  STDERR.puts "#{resources_count} #{map.resources.size}"
   gets
 
   map.workers.each_with_index do |worker, i|

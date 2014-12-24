@@ -1,10 +1,9 @@
-class Map
-  attr_accessor :units, :enemies, :resources, :map
+class Map < Cell
+  attr_accessor :map
 
-  def initialize
+  def turn_init
     self.units = []
     self.enemies = []
-    self.resources = []
 
     self.map = []
     100.times do |i|
@@ -13,18 +12,20 @@ class Map
         self.map[i][j] = Cell.new
       end
     end
+
+    self.resources.each do |resource|
+      self.map[resource.y][resource.x].resources << resource
+    end
+  end
+
+  def initialize
+    super
+
+    turn_init
   end
 
   def at(y, x)
     map[y][x]
-  end
-
-  def workers
-    self.units.select { |u| u.instance_of?(Worker) }
-  end
-
-  def castle
-    self.units.find { |u| u.instance_of?(Castle) }
   end
 
   def add_unit(unit)
@@ -38,6 +39,8 @@ class Map
   end
 
   def add_resource(resource)
+    return if self.at(resource.y, resource.x).resources.size > 0
+
     self.resources << resource
     self.map[resource.y][resource.x].resources << resource
   end
