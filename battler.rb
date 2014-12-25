@@ -1,5 +1,27 @@
 class Battler < Unit
-  def think(map)
+  attr_accessor :capturer
+
+  def initialize(data, enemy)
+    super
+
+    self.capturer = rand < 0.1
+  end
+
+  def think(map, work_manager)
+    if capturer
+      cell = map.at(y, x)
+      if cell.resources.size > 0 && cell.battlers.size <= 10
+        return
+      end
+
+      target_resource = map.near_exists_enemy_resource
+      if target_resource
+        move_to(target_resource.y, target_resource.x)
+      end
+
+      return
+    end
+
     enemy_castle = map.enemy_castle
 
     if enemy_castle

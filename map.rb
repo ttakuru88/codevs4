@@ -63,6 +63,8 @@ class Map < Cell
     if unit.enemy?
       self.enemies << unit unless unit.castle? && enemy_castle
       self.map[unit.y][unit.x].enemies << unit
+
+      self.map[unit.y][unit.x].resources.each { |r| r.exists_enemy = true }
     else
       cur_unit = find_unit(unit.id)
       if cur_unit
@@ -91,6 +93,19 @@ class Map < Cell
     unit
   end
 
+  def near_exists_enemy_resource
+    max = 0
+    resource = nil
+    resources.each do |r|
+      if r.exists_enemy && max < r.x + r.y
+        max = r.x + r.y
+        resource = r
+      end
+    end
+
+    resource
+  end
+
   def find_unit(unit_id)
     units.find { |u| u.id == unit_id }
   end
@@ -100,7 +115,8 @@ class Map < Cell
   end
 
   def add_resource(resource)
-    return false if self.at(resource.y, resource.x).resources.size > 0
+    cell = at(resource.y, resource.x)
+    return false if cell.resources.size > 0
 
     self.resources << resource
     self.map[resource.y][resource.x].resources << resource

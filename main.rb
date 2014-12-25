@@ -37,14 +37,11 @@ loop do
     map.add_unit Unit.load(gets, true)
   end
 
-#  100.times do |y|
-#    100.times do |x|
-#      STDERR.print "#{map.visible_map[y][x] ? 1 : 0} "
-#    end
-#    STDERR.puts
-#  end
-#  STDERR.puts
-#  STDERR.puts
+  map.units.each do |unit|
+    cell = map.at(unit.y, unit.x)
+    ee = cell.enemies.size > 0
+    cell.resources.each { |r| r.exists_enemy = ee }
+  end
 
   map.clean_units!
 
@@ -95,7 +92,7 @@ loop do
   end
 
   map.battlers.each do |unit|
-    unit.think(map)
+    unit.think(map, work_manager)
   end
 
   map.villages.each do |village|
