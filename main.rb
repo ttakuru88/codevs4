@@ -82,7 +82,7 @@ loop do
   if all_resources >= Base::RESOURCE && map.bases.size <= 1
     far_worker = nil
     far = 0
-    map.neet_workers.each do |worker|
+    map.workers.each do |worker|
       if far < worker.x + worker.y
         far_worker = worker
         far = worker.x + worker.y
