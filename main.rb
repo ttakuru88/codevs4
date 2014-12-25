@@ -1,11 +1,13 @@
-%w(work work_manager cell map resource unit worker knight fighter assassin castle village base).each do |w|
+%w(work work_manager cell map resource unit battler worker knight fighter assassin castle village base).each do |w|
   require "#{__dir__}/#{w}.rb"
 end
 
 puts 'ttakuru88'
 
-map = Map.new
-work_manager = WorkManager.new
+map = nil
+stage = nil
+work_manager = nil
+prev_stage = -1
 
 loop do
   STDOUT.flush
@@ -13,11 +15,17 @@ loop do
   ms = gets.to_i
   break if ms <= 0
 
-  map.turn_init
-
+  prev_stage = stage
   stage = gets.to_i
+  if prev_stage != stage
+    map = Map.new
+    work_manager = WorkManager.new
+  end
+
   turn  = gets.to_i
   all_resources = gets.to_i
+
+  map.turn_init
 
   units_count = gets.to_i
   units_count.times do |i|
@@ -62,7 +70,7 @@ loop do
     worker.think(map, work_manager)
   end
 
-  if all_resources >= Base::RESOURCE && map.bases.size <= 0
+  if all_resources >= Base::RESOURCE && map.bases.size <= 1
     far_worker = nil
     far = 0
     map.neet_workers.each do |worker|
@@ -75,6 +83,10 @@ loop do
         far_worker.create_base(map)
       end
     end
+  end
+
+  map.battlers.each do |unit|
+    unit.think(map)
   end
 
   map.villages.each do |village|

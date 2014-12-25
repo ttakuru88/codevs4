@@ -2,7 +2,7 @@ class Map < Cell
   attr_accessor :map
 
   def turn_init
-    self.enemies = []
+    self.enemies = [enemy_castle]
 
     self.units.each do |unit|
       unit.die = true
@@ -38,7 +38,7 @@ class Map < Cell
 
   def add_unit(unit)
     if unit.enemy?
-      self.enemies << unit
+      self.enemies << unit unless unit.castle? && enemy_castle
       self.map[unit.y][unit.x].enemies << unit
     else
       cur_unit = find_unit(unit.id)

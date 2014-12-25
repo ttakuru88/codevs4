@@ -44,6 +44,10 @@ class Unit
     !!enemy
   end
 
+  def castle?
+    false
+  end
+
   def move_to(to_y, to_x)
     if y < to_y
       self.action = :down
