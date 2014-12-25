@@ -35,13 +35,13 @@ loop do
     12.times do |i|
       y = i * 9
       work_manager.add(10, [{type: :move, x: map.castle.x, y: y},
-                            {type: :move, x: 100, y: y}])
+                            {type: :move, x: 99, y: y}])
     end
 
     x = map.castle.x - 4
     while x > 0
       work_manager.add(10, [{type: :move, x: x, y: 0},
-                            {type: :move, x: x, y: 100}])
+                            {type: :move, x: x, y: 99}])
 
       x -= 9
     end
@@ -60,6 +60,21 @@ loop do
 
   map.workers.each do |worker|
     worker.think(map, work_manager)
+  end
+
+  if all_resources >= Base::RESOURCE && map.bases.size <= 0
+    far_worker = nil
+    far = 0
+    map.neet_workers.each do |worker|
+      if far < worker.x + worker.y
+        far_worker = worker
+        far = worker.x + worker.y
+      end
+
+      if far_worker
+        far_worker.create_base(map)
+      end
+    end
   end
 
   map.villages.each do |village|

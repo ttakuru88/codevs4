@@ -31,6 +31,12 @@ class Worker < Unit
     end
   end
 
+  def create_base(map)
+    if map.at(y, x).bases.size <= 0
+      self.action = :create_base
+    end
+  end
+
   def finish_work(work_manager)
     work_manager.find(work_id).done!
     self.work_id = nil
