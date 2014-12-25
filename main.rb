@@ -28,6 +28,8 @@ loop do
     map.add_unit Unit.load(gets, true)
   end
 
+  map.clean_units!
+
   resources_count = gets.to_i
   resources_count.times do |i|
     map.add_resource Resource.load(gets)

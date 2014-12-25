@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die
 
   # 0: worker
   # 1: knight
@@ -26,6 +26,7 @@ class Unit
     self.hp = data[3]
     self.enemy = enemy
     self.action = :none
+    self.die = false
   end
 
   def action_number

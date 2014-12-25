@@ -2,8 +2,12 @@ class Map < Cell
   attr_accessor :map
 
   def turn_init
-    self.units = []
     self.enemies = []
+
+    self.units.each do |unit|
+      unit.die = true
+      unit.action = -1
+    end
 
     self.map = []
     100.times do |i|
@@ -33,9 +37,28 @@ class Map < Cell
       self.enemies << unit
       self.map[unit.y][unit.x].enemies << unit
     else
-      self.units << unit
+      cur_unit = find_unit(unit.id)
+      if cur_unit
+        cur_unit.die = false
+        cur_unit.hp = unit.hp
+        cur_unit.y = unit.y
+        cur_unit.x = unit.x
+
+        unit = cur_unit
+      else
+        self.units << unit
+      end
+
       self.map[unit.y][unit.x].units << unit
     end
+  end
+
+  def find_unit(unit_id)
+    units.find { |u| u.id == unit_id }
+  end
+
+  def clean_units!
+    self.units = units.reject(&:die)
   end
 
   def add_resource(resource)
