@@ -1,40 +1,41 @@
 class Worker < Unit
   RESOURCE = 40.freeze
 
-  def think(map, index)
-    if index < 12
-      to_x = 100
-      to_y = index % 12 * 9
+  attr_accessor :work_id, :tasks
 
-      move_to(to_y, to_x)
-    else
-      target_resource = map.resources[index - 12]
+  def think(map, work_manager)
+    unless work_id
+      work = work_manager.primary_work
+      if work
+        work.do = true
+        self.work_id = work.id
+        self.tasks = work.tasks.clone
+      end
+    end
 
-      if target_resource
-        if move_to(target_resource.y, target_resource.x)
-          if map.at(y, x).villages.size <= 0
-            self.action = :create_village
-          elsif map.at(y, x).bases.size <= 0
-            self.action = :create_base
+    if work_id
+      task = tasks[0]
+      if task[:type] == 'move'
+        if move_to(task[:y], task[:x])
+          if finish_task
+            finish_work(work_manager)
           end
         end
+      elsif task[:type] == 'create_village'
+        self.action = :create_village
+        finish_work(work_manager) if finish_task
       end
     end
   end
 
-  def move_to(to_y, to_x)
-    if y < to_y
-      self.action = :down
-    elsif y > to_y
-      self.action = :up
-    elsif x < to_x
-      self.action = :right
-    elsif x > to_x
-      self.action = :left
-    else
-      return true
-    end
+  def finish_work(work_manager)
+    work_manager.find(work_id).done!
+    self.work_id = nil
+  end
 
-    return false
+  def finish_task
+    self.tasks.shift
+
+    tasks.length <= 0
   end
 end

@@ -43,4 +43,20 @@ class Unit
   def enemy?
     !!enemy
   end
+
+  def move_to(to_y, to_x)
+    if y < to_y
+      self.action = :down
+    elsif y > to_y
+      self.action = :up
+    elsif x < to_x
+      self.action = :right
+    elsif x > to_x
+      self.action = :left
+    else
+      return true
+    end
+
+    return false
+  end
 end

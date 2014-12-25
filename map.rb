@@ -62,9 +62,10 @@ class Map < Cell
   end
 
   def add_resource(resource)
-    return if self.at(resource.y, resource.x).resources.size > 0
+    return false if self.at(resource.y, resource.x).resources.size > 0
 
     self.resources << resource
     self.map[resource.y][resource.x].resources << resource
+    resource
   end
 end
