@@ -37,6 +37,15 @@ loop do
     map.add_unit Unit.load(gets, true)
   end
 
+#  100.times do |y|
+#    100.times do |x|
+#      STDERR.print "#{map.visible_map[y][x] ? 1 : 0} "
+#    end
+#    STDERR.puts
+#  end
+#  STDERR.puts
+#  STDERR.puts
+
   map.clean_units!
 
   if turn == 0

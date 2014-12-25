@@ -1,10 +1,13 @@
 class Cell
-  attr_accessor :units, :enemies, :resources
+  attr_accessor :units, :enemies, :resources, :visible, :x, :y
 
-  def initialize
+  def initialize(y, x)
     self.units = []
     self.enemies = []
     self.resources = []
+    self.visible = false
+    self.y = y
+    self.x = x
   end
 
   def workers

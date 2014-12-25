@@ -1,5 +1,5 @@
 class Map < Cell
-  attr_accessor :map
+  attr_accessor :map, :visible_map
 
   def turn_init
     self.enemies = [enemy_castle]
@@ -13,7 +13,7 @@ class Map < Cell
     100.times do |i|
       self.map[i] = []
       100.times do |j|
-        self.map[i][j] = Cell.new
+        self.map[i][j] = Cell.new(i, j)
       end
     end
 
@@ -23,9 +23,17 @@ class Map < Cell
   end
 
   def initialize
-    super
+    super(0, 0)
 
     turn_init
+
+    self.visible_map = []
+    100.times do |i|
+      self.visible_map[i] = []
+      100.times do |j|
+        self.visible_map[i][j] = false
+      end
+    end
   end
 
   def active_units
@@ -33,7 +41,22 @@ class Map < Cell
   end
 
   def at(y, x)
-    map[y][x]
+    cell = map[y][x]
+    cell.visible = visible_map[y][x]
+    cell
+  end
+
+  def expect_enemy_castle_cell
+    60.upto(99) do |y|
+      60.upto(99) do |x|
+        next if y + x < 160
+
+        cell = at(y, x)
+        unless cell.visible
+          return at(y, x)
+        end
+      end
+    end
   end
 
   def add_unit(unit)
@@ -54,7 +77,18 @@ class Map < Cell
       end
 
       self.map[unit.y][unit.x].units << unit
+
+      unless visible_map[unit.y][unit.x]
+        (unit.y - 4).upto(unit.y + 4) do |to_y|
+          self.visible_map[to_y][unit.x] = true if to_y < 100 && to_y > 0
+        end
+        (unit.x - 4).upto(unit.x + 4) do |to_x|
+          self.visible_map[unit.y][to_x] = true if to_x < 100 && to_x > 0
+        end
+      end
     end
+
+    unit
   end
 
   def find_unit(unit_id)

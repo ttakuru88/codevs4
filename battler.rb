@@ -5,7 +5,13 @@ class Battler < Unit
     if enemy_castle
       move_to(enemy_castle.y, enemy_castle.x)
     else
-      move_to(60 + (rand * 40).to_i, 60 + (rand * 40).to_i)
+      cell = map.expect_enemy_castle_cell
+
+      if cell
+        move_to(cell.y, cell.x)
+      else
+        move_to(60 + (rand * 40).to_i, 60 + (rand * 40).to_i)
+      end
     end
   end
 end
