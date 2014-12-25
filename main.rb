@@ -103,7 +103,7 @@ loop do
   end
 
   map.bases.each do |base|
-    base.think(map)
+    base.think(map, all_resources)
   end
 
   map.castle.think(map, work_manager, all_resources)
