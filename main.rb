@@ -87,10 +87,10 @@ loop do
         far_worker = worker
         far = worker.x + worker.y
       end
+    end
 
-      if far_worker
-        far_worker.create_base(map)
-      end
+    if far_worker
+      far_worker.create_base(map)
     end
   end
 
