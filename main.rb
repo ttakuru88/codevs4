@@ -17,7 +17,7 @@ loop do
 
   stage = gets.to_i
   turn  = gets.to_i
-  all_resources_count = gets.to_i
+  all_resources = gets.to_i
 
   units_count = gets.to_i
   units_count.times do |i|
@@ -31,7 +31,7 @@ loop do
 
   map.clean_units!
 
-  if turn == 1
+  if turn == 0
     12.times do |i|
       y = i * 9
       work_manager.add(10, [{type: :move, x: map.castle.x, y: y},
@@ -70,10 +70,10 @@ loop do
     base.think(map)
   end
 
-  map.castle.think(map, work_manager)
+  map.castle.think(map, work_manager, all_resources)
 
-  puts map.units.size
-  map.units.each do |unit|
+  puts map.active_units.size
+  map.active_units.each do |unit|
     puts "#{unit.id} #{unit.action_number}"
   end
 end

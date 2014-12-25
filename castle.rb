@@ -1,11 +1,9 @@
 class Castle < Unit
   SIGHT = 10.freeze
 
-  def think(map, work_manager)
-    if work_manager.primary_work
+  def think(map, work_manager, all_resouces)
+    if work_manager.primary_work && all_resouces >= Worker::RESOURCE
       self.action = :create_worker
-    else
-      self.action = :create_base
     end
   end
 end

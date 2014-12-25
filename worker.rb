@@ -15,15 +15,18 @@ class Worker < Unit
 
     if work_id
       task = tasks[0]
-      if task[:type] == 'move'
+      if task[:type] == :move
         if move_to(task[:y], task[:x])
           if finish_task
             finish_work(work_manager)
           end
         end
-      elsif task[:type] == 'create_village'
-        self.action = :create_village
-        finish_work(work_manager) if finish_task
+      elsif task[:type] == :create_village
+        if map.at(y, x).villages.size > 0
+          finish_work(work_manager) if finish_task
+        else
+          self.action = :create_village
+        end
       end
     end
   end

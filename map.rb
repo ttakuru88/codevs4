@@ -6,7 +6,7 @@ class Map < Cell
 
     self.units.each do |unit|
       unit.die = true
-      unit.action = -1
+      unit.action = :none
     end
 
     self.map = []
@@ -26,6 +26,10 @@ class Map < Cell
     super
 
     turn_init
+  end
+
+  def active_units
+    units.select { |u| u.action != :none }
   end
 
   def at(y, x)
