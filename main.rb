@@ -70,7 +70,7 @@ loop do
     base.think(map)
   end
 
-  map.castle.think(map)
+  map.castle.think(map, work_manager)
 
   puts map.units.size
   map.units.each do |unit|
