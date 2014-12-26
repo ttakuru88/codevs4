@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks
 
   # 0: worker
   # 1: knight
@@ -62,5 +62,16 @@ class Unit
     end
 
     return false
+  end
+
+  def finish_work(work_manager)
+    work_manager.find(work_id).done!
+    self.work_id = nil
+  end
+
+  def finish_task
+    self.tasks.shift
+
+    tasks.length <= 0
   end
 end

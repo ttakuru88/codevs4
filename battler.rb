@@ -4,22 +4,35 @@ class Battler < Unit
   def initialize(data, enemy)
     super
 
-    self.capturer = rand < 0.1
+    self.capturer = rand < 0.3
   end
 
-  def think(map, work_manager)
+  def think(map, battler_work)
     if capturer
-      cell = map.at(y, x)
-      if cell.resources.size > 0 && cell.battlers.size <= 10
+      unless work_id
+        work = battler_work.primary_work
+
+        if work
+          work.do = true
+          self.work_id = work.id
+          self.tasks = work.tasks.clone
+        end
+      end
+
+      if work_id
+        task = tasks[0]
+        if task[:type] == :move
+          if move_to(task[:y], task[:x])
+            if finish_task
+              finish_work(battler_work)
+            end
+          end
+        else task[:type] == :wait
+          # wait
+        end
+
         return
       end
-
-      target_resource = map.near_exists_enemy_resource
-      if target_resource
-        move_to(target_resource.y, target_resource.x)
-      end
-
-      return
     end
 
     enemy_castle = map.enemy_castle

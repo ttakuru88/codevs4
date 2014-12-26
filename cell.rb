@@ -10,6 +10,10 @@ class Cell
     self.x = x
   end
 
+  def noguard_resources
+    resources.select { |r| !r.guardian }
+  end
+
   def workers
     units.select { |u| u.instance_of?(Worker) }
   end

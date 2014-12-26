@@ -8,6 +8,7 @@ map = nil
 stage = nil
 work_manager = nil
 prev_stage = -1
+battler_work = nil
 
 loop do
   STDOUT.flush
@@ -20,6 +21,7 @@ loop do
   if prev_stage != stage
     map = Map.new
     work_manager = WorkManager.new
+    battler_work = WorkManager.new
   end
 
   turn  = gets.to_i
@@ -52,7 +54,7 @@ loop do
                             {type: :move, x: 99, y: y}])
     end
 
-    x = map.castle.x - 4
+    x = map.castle.x - 8
     while x > 0
       work_manager.add(10, [{type: :move, x: x, y: 0},
                             {type: :move, x: x, y: 99}])
@@ -91,8 +93,19 @@ loop do
     end
   end
 
+  if map.battlers.size > 0
+    map.noguard_resources.reverse_each do |resource|
+      8.times do |i|
+        battler_work.add(10, [{type: :move, x: resource.x, y: resource.y},
+                              {type: :wait}])
+      end
+
+      resource.guardian = true
+    end
+  end
+
   map.battlers.each do |unit|
-    unit.think(map, work_manager)
+    unit.think(map, battler_work)
   end
 
   map.villages.each do |village|
