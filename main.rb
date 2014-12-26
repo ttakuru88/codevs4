@@ -108,15 +108,24 @@ loop do
     unit.think(map, battler_work)
   end
 
-  map.villages.each do |village|
-    village.think(map)
-  end
-
   map.bases.each do |base|
     base.think(map, all_resources)
   end
 
-  map.castle.think(map, work_manager, all_resources)
+  work_manager.available_works.each do |work|
+    fabricator = map.castle
+    min_dist = (work.typical_y - map.castle.y).abs + (work.typical_x - map.castle.x).abs
+
+    map.villages.each do |village|
+      dist = (work.typical_y - village.y).abs + (work.typical_x - village.x).abs
+      if min_dist > dist
+        min_dist = dist
+        fabricator = village
+      end
+    end
+
+    fabricator.create_worker if fabricator
+  end
 
   puts map.active_units.size
   map.active_units.each do |unit|

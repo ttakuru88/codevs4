@@ -36,6 +36,10 @@ class Unit
   def think(map)
   end
 
+  def create_worker
+   self.action = :create_worker
+  end
+
   def sight
     SIGHT
   end

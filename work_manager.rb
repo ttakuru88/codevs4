@@ -23,7 +23,11 @@ class WorkManager
   end
 
   def primary_work
-    works.find { |w| !w.do && !w.done }
+    available_works[0]
+  end
+
+  def available_works
+    works.select { |w| !w.do && !w.done }
   end
 
   def find(work_id)
