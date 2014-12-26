@@ -67,7 +67,8 @@ loop do
   resources_count.times do |i|
     if resource = map.add_resource(Resource.load(gets))
       work_manager.add(9, [{type: :move, x: resource.x, y: resource.y},
-                           {type: :create_village}])
+                           {type: :create_village},
+                           {type: :wait}])
     end
   end
   gets
@@ -105,11 +106,19 @@ loop do
   end
 
   map.resources.each do |resource|
-    resource.require_worker.times do |i|
+    require_worker = [0, resource.reserved_worker - resource.require_worker].max
+    require_worker.times do |i|
       work_manager.add(10, [{type: :move, x: resource.x, y: resource.y},
                             {type: :wait}])
+
+      resource.reserved_worker += 1
     end
-    resource.require_worker = 0
+
+    cell = map.at(resource.y, resource.x)
+    STDERR.puts "#{cell.waiting_capturers.size} #{cell.enemies.size} #{resource.require_worker}"
+    if cell.waiting_capturers.size > 0 && cell.enemies.size <= 0 && resource.require_worker < 10
+      resource.require_worker += 5
+    end
   end
 
   map.battlers.each do |unit|

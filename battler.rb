@@ -1,6 +1,4 @@
 class Battler < Unit
-  attr_accessor :capturer
-
   def initialize(data, enemy)
     super
 

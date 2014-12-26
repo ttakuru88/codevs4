@@ -18,6 +18,10 @@ class Cell
     units.select { |u| u.instance_of?(Worker) }
   end
 
+  def waiting_capturers
+    units.select { |u| u.waiting? && u.capturer }
+  end
+
   def neet_workers
     workers.select { |u| !u.work_id }
   end

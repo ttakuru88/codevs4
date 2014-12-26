@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer
 
   # 0: worker
   # 1: knight
@@ -27,6 +27,8 @@ class Unit
     self.enemy = enemy
     self.action = :none
     self.die = false
+    self.tasks = []
+    self.capturer = false
   end
 
   def action_number
@@ -42,6 +44,11 @@ class Unit
 
   def sight
     SIGHT
+  end
+
+  def waiting?
+    task = tasks[0]
+    task && task[:type] == :wait
   end
 
   def enemy?
