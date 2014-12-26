@@ -104,6 +104,14 @@ loop do
     end
   end
 
+  map.resources.each do |resource|
+    resource.require_worker.times do |i|
+      work_manager.add(10, [{type: :move, x: resource.x, y: resource.y},
+                            {type: :wait}])
+    end
+    resource.require_worker = 0
+  end
+
   map.battlers.each do |unit|
     unit.think(map, battler_work)
   end
@@ -125,6 +133,10 @@ loop do
     end
 
     fabricator.create_worker if fabricator
+  end
+
+  map.villages.each do |village|
+    village.think(map, all_resources)
   end
 
   puts map.active_units.size

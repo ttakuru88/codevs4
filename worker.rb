@@ -20,19 +20,27 @@ class Worker < Unit
           end
         end
       elsif task[:type] == :create_village
-        near_village = false
+        near_village = nil
         map.villages.each do |village|
           if (x - village.x).abs + (y - village.y).abs < 25
-            near_village = true
+            near_village = village
             break
           end
         end
 
         if near_village
+          unless map.at(y, x).villages.include?(near_village)
+            map.at(y, x).resources.each do |resource|
+              resource.require_worker = 5
+            end
+          end
+
           finish_work(work_manager) if finish_task
         else
           self.action = :create_village
         end
+      elsif task[:type] == :wait
+        # wait
       end
     end
   end
