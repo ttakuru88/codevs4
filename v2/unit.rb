@@ -42,6 +42,10 @@ class Unit
     self.capturer = false
   end
 
+  def dead
+    # on dead
+  end
+
   def action_number
     ACTIONS[action]
   end

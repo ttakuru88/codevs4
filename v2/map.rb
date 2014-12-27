@@ -101,7 +101,11 @@ class Map < Cell
   end
 
   def clean_dead_units
-    self.units = units.reject(&:die)
+    self.units = units.reject do |unit|
+      unit.dead if unit.die
+
+      unit.die
+    end
   end
 
   def add_resource(resource)

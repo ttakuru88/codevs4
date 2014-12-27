@@ -1,5 +1,5 @@
 class Battler < Unit
-  def initialize(data, enemy)
+  def initialize(data)
     super
 
     self.capturer = rand < 0.3
