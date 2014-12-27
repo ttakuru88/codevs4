@@ -42,6 +42,10 @@ class Unit
     self.capturer = false
   end
 
+  def sight
+    SIGHT
+  end
+
   def dead
     # on dead
   end

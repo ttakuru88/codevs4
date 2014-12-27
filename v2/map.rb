@@ -61,16 +61,14 @@ class Map < Cell
     end
 
     cell = at(unit.y, unit.x)
-
     cell.units << unit
 
-    unless cell.known
-      (unit.y - 4).upto(unit.y + 4) do |to_y|
-        cell.known = true if to_y < 100 && to_y > 0
-      end
-      (unit.x - 4).upto(unit.x + 4) do |to_x|
-        cell.known = true if to_x < 100 && to_x > 0
-      end
+    (-unit.sight).upto(unit.sight) do |dy|
+       (-(unit.sight - dy.abs)).upto(unit.sight - dy.abs) do |dx|
+         y = unit.y + dy
+         x = unit.x + dx
+         at(y, x).known = true if y > 0 && x > 0 && y < 100 && x < 100
+       end
     end
 
     unit
