@@ -7,8 +7,8 @@ class Base < Unit
     wish_list = []
 
     worker = map.farest_worker
-    if worker && worker.y + worker.x > 100
-      wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 11, worker)
+    if worker && worker.y + worker.x > 120
+      wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 9 + map.bases.size * 2, worker)
     end
 
     wish_list
