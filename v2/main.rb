@@ -63,6 +63,7 @@ loop do
     groups.attach(worker)
   end
 
+  map.die_tmp_villages
   dead_units = map.clean_dead_units
 
   groups.clean(dead_units)
@@ -70,6 +71,7 @@ loop do
 
   wish_list = []
   wish_list += groups.wishes
+  wish_list += Village.wishes(map)
 
   wish_list = wish_list.sort_by(&:primary)
 

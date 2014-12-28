@@ -1,12 +1,13 @@
 class Wish
-  attr_accessor :type, :cost, :y, :x, :primary
+  attr_accessor :type, :cost, :y, :x, :primary, :unit
 
-  def initialize(type, cost, y, x, primary)
+  def initialize(type, cost, y, x, primary, unit = nil)
     self.type = type
     self.cost = cost
     self.y = y
     self.x = x
     self.primary = primary
+    self.unit = unit
   end
 
   def realize(map)
@@ -24,5 +25,9 @@ class Wish
     else
       false
     end
+  end
+
+  def create_village(map)
+    unit.create_village
   end
 end

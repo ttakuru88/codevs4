@@ -96,6 +96,14 @@ class Map < Cell
     unit
   end
 
+  def near_villages(y, x, range = 30)
+    villages.select { |v| (v.y-y).abs + (v.x-x).abs < range }
+  end
+
+  def near_resources(y, x, range = 30)
+    resources.select { |v| (v.y-y).abs + (v.x-x).abs < range }
+  end
+
   def near_exists_enemy_resource
     max = 0
     resource = nil
@@ -128,12 +136,18 @@ class Map < Cell
     dead_units
   end
 
+  def die_tmp_villages
+    villages.each do |village|
+      village.die = true if village.id == nil
+    end
+  end
+
   def add_resource(resource)
     cell = at(resource.y, resource.x)
     return false if cell.resources.size > 0
 
     self.resources << resource
-    self.map[resource.y][resource.x].resources << resource
+    at(resource.y, resource.x).resources << resource
     resource
   end
 end

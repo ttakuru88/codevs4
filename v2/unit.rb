@@ -54,7 +54,11 @@ class Unit
   end
 
   def create_worker
-   self.action = :create_worker
+    self.action = :create_worker
+  end
+
+  def create_village
+    self.action = :create_village
   end
 
   def move_to(to_y, to_x)
