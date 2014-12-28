@@ -30,4 +30,8 @@ class Wish
   def create_village(map)
     unit.create_village
   end
+
+  def create_base(map)
+    unit.create_base
+  end
 end

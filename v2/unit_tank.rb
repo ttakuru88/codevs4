@@ -41,7 +41,7 @@ class UnitTank
   end
 
   def active_units
-    units.select { |u| u.action != :none }
+    units.select { |u| u.id && u.action != :none }
   end
 
   def bases

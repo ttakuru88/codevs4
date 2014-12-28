@@ -117,6 +117,20 @@ class Map < Cell
     resource
   end
 
+  def farest_worker
+    max_dist = 0
+    worker = nil
+    workers.each do |w|
+      dist = w.x + w.y
+      if dist > max_dist
+        worker = w
+        max_dist = dist
+      end
+    end
+
+    worker
+  end
+
   def find_unit(unit_id)
     units.find { |u| u.id == unit_id }
   end

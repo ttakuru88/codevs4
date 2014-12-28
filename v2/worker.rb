@@ -9,10 +9,4 @@ class Worker < Unit
       map.near_villages(resource.y, resource.x).size <= 0
     end
   end
-
-  def create_base(map)
-    if map.at(y, x).bases.size <= 0
-      self.action = :create_base
-    end
-  end
 end

@@ -61,6 +61,10 @@ class Unit
     self.action = :create_village
   end
 
+  def create_base
+    self.action = :create_base
+  end
+
   def move_to(to_y, to_x)
     if y < to_y
       self.action = :down

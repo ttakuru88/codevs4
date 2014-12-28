@@ -75,6 +75,7 @@ loop do
   wish_list = []
   wish_list += groups.wishes
   wish_list += Village.wishes(map)
+  wish_list += Base.wishes(map)
 
   wish_list = wish_list.sort_by(&:primary)
 
