@@ -36,6 +36,21 @@ class Map < Cell
     map[y][x]
   end
 
+  def near_worker_factory(y, x)
+    factory = castle
+    min_dist = (castle.y - y).abs + (castle.x - x).abs
+
+    villages.each do |village|
+      dist = (village.y - y).abs + (village.x - x).abs
+      if dist < min_dist
+        min_dist = dist
+        factory = village
+      end
+    end
+
+    factory
+  end
+
   def expect_enemy_castle_cell
     60.upto(99) do |y|
       60.upto(99) do |x|
@@ -67,7 +82,7 @@ class Map < Cell
        (-(unit.sight - dy.abs)).upto(unit.sight - dy.abs) do |dx|
          y = unit.y + dy
          x = unit.x + dx
-         at(y, x).known = true if y > 0 && x > 0 && y < 100 && x < 100
+         at(y, x).known = true if y >= 0 && x >= 0 && y < 100 && x < 100
        end
     end
 
@@ -99,11 +114,18 @@ class Map < Cell
   end
 
   def clean_dead_units
+    dead_units = []
+
     self.units = units.reject do |unit|
-      unit.dead if unit.die
+      if unit.die
+        unit.dead
+        dead_units << unit
+      end
 
       unit.die
     end
+
+    dead_units
   end
 
   def add_resource(resource)

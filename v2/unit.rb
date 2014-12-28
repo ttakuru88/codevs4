@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group
 
   # 0: worker
   # 1: knight
@@ -42,10 +42,6 @@ class Unit
     self.capturer = false
   end
 
-  def sight
-    SIGHT
-  end
-
   def dead
     # on dead
   end
@@ -59,23 +55,6 @@ class Unit
 
   def create_worker
    self.action = :create_worker
-  end
-
-  def sight
-    SIGHT
-  end
-
-  def waiting?
-    task = tasks[0]
-    task && task[:type] == :wait
-  end
-
-  def enemy?
-    !!enemy
-  end
-
-  def castle?
-    false
   end
 
   def move_to(to_y, to_x)
@@ -92,6 +71,27 @@ class Unit
     end
 
     return false
+  end
+
+  def sight
+    SIGHT
+  end
+
+  def waiting?
+    task = tasks[0]
+    task && task[:type] == :wait
+  end
+
+  def enemy?
+    !!enemy
+  end
+
+  def castle?
+    self.instance_of?(Castle)
+  end
+
+  def worker?
+    self.instance_of?(Worker)
   end
 
   def finish_work(work_manager)
