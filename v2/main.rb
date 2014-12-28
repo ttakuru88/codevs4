@@ -40,20 +40,23 @@ loop do
   resources_count = gets.to_i
   resources_count.times do |i|
     resource = map.add_resource(Resource.load(gets))
+    if resource
+      groups.create(5, {worker: 5..5}, [{x: resource.x, y: resource.y, wait: true}])
+    end
   end
   gets
 
   if turn == 0
     12.times do |i|
       y = i * 9
-      groups.create({worker: 1..1}, [{x: map.castle.x, y: y},
-                                     {x: 99, y: y}])
+      groups.create(10, {worker: 1..1}, [{x: map.castle.x, y: y},
+                                         {x: 99, y: y}])
     end
 
     x = map.castle.x - 8
     while x > 0
-      groups.create({worker: 1..1}, [{x: x, y: 0},
-                                     {x: x, y: 99}])
+      groups.create(10, {worker: 1..1}, [{x: x, y: 0},
+                                         {x: x, y: 99}])
 
       x -= 9
     end

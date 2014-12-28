@@ -5,8 +5,8 @@ class GroupList
     self.groups = []
   end
 
-  def create(units, points)
-    group = Group.new(units, points)
+  def create(primary, units, points)
+    group = Group.new(primary, units, points)
     self.groups << group
 
     group

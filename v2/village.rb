@@ -6,7 +6,7 @@ class Village < Unit
     wish_list = []
     map.workers.each do |worker|
       if worker.build_village?(map)
-        wish_list << Wish.new(:create_village, Village::RESOURCE, worker.y, worker.x, 5, worker)
+        wish_list << Wish.new(:create_village, Village::RESOURCE, worker.y, worker.x, 8, worker)
         map.units << Village.new([nil, worker.y, worker.x, 1])
       end
     end
