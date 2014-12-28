@@ -41,7 +41,7 @@ loop do
   resources_count.times do |i|
     resource = map.add_resource(Resource.load(gets))
     if resource
-      groups.create(5, {worker: 5..5}, [{x: resource.x, y: resource.y, wait: true}])
+      groups.create(10, {worker: 5..5}, [{x: resource.x, y: resource.y, wait: true}])
     end
   end
   gets
@@ -76,14 +76,11 @@ loop do
   wish_list += groups.wishes
   wish_list += Village.wishes(map)
   wish_list += Base.wishes(map)
-
   wish_list = wish_list.sort_by(&:primary)
 
   wish_list.each do |wish|
     if resources_rest >= wish.cost
-      if wish.realize(map)
-        resources_rest -= wish.cost
-      end
+      resources_rest -= wish.cost if wish.realize(map)
     else
       break
     end

@@ -18,9 +18,9 @@ class Wish
 
   def create_worker(map)
     near_worker_factory = map.near_worker_factory(y, x)
-
     if near_worker_factory
       near_worker_factory.create_worker
+      unit.creating_worker += 1
       true
     else
       false

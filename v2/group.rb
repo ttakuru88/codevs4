@@ -1,5 +1,5 @@
 class Group < UnitTank
-  attr_accessor :require_units, :points, :next_point_index, :primary
+  attr_accessor :require_units, :points, :next_point_index, :primary, :creating_worker
 
   def initialize(primary, require_units, points)
     super(points[0][:y], points[0][:x])
@@ -8,6 +8,7 @@ class Group < UnitTank
     self.points           = points
     self.next_point_index = 0
     self.primary          = primary
+    self.creating_worker  = 0
   end
 
   def finished?
@@ -57,7 +58,7 @@ class Group < UnitTank
     require_units.each do |unit_type, require_data|
       if unit_type == :worker
         if require_data.max > workers.size
-          wish_list << Wish.new(:create_worker, Worker::RESOURCE, y, x, primary)
+          wish_list << Wish.new(:create_worker, Worker::RESOURCE, y, x, primary, self)
         end
       end
     end

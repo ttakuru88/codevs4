@@ -17,6 +17,7 @@ class GroupList
     if group
       unit.group = group
       group.units << unit
+      group.creating_worker -= 1
     end
   end
 
@@ -25,12 +26,13 @@ class GroupList
     min_dist = 101 + 101
 
     groups.each do |group|
-      if unit.worker?
+      if unit.worker? && group.creating_worker > 0
         next if group.full_units?
 
         dist = (group.y - unit.y).abs + (group.x - unit.x).abs
         if dist < min_dist
           near_group = group
+          min_dist = dist
         end
       end
     end
