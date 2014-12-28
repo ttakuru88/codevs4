@@ -18,6 +18,10 @@ class Group < UnitTank
     !next_point
   end
 
+  def include_battler?
+    require_units.include?(:fighter) || require_units.include?(:knight) || require_units.include?(:assassin)
+  end
+
   def move(map)
     if required_units?(map) && !finished?
       to_x = to_y = nil

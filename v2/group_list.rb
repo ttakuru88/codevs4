@@ -31,7 +31,11 @@ class GroupList
   end
 
   def battler_groups
-    groups.select { |g| g.require_units.include?(:fighter) || g.require_units.include?(:knight) || g.require_units.include?(:assassin) }
+    groups.select { |g| g.include_battler? }
+  end
+
+  def clean_destroyed_group
+    self.groups = groups.reject { |g| g.finished? && g.units.size <= 0 }
   end
 
   def nearest_unfull_group(unit)
