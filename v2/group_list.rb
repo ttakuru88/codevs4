@@ -17,8 +17,21 @@ class GroupList
     if group
       unit.group = group
       group.units << unit
-      group.creating_worker -= 1
+
+      if unit.worker?
+        group.creating_worker -= 1
+      elsif unit.knight?
+        group.creating_knight -= 1
+      elsif unit.fighter?
+        group.creating_fighter -= 1
+      elsif unit.assassin?
+        group.creating_assassin -= 1
+      end
     end
+  end
+
+  def battler_groups
+    groups.select { |g| g.require_units.include?(:fighter) || g.require_units.include?(:knight) || g.require_units.include?(:assassin) }
   end
 
   def nearest_unfull_group(unit)
@@ -26,9 +39,12 @@ class GroupList
     min_dist = 101 + 101
 
     groups.each do |group|
-      if unit.worker? && group.creating_worker > 0
-        next if group.full_units?
+      next if group.full_units?
 
+      if unit.worker? && group.creating_worker > 0 ||
+          unit.fighter? && group.creating_fighter > 0 ||
+          unit.knight? && group.creating_knight > 0 ||
+          unit.assassin? && group.creating_assassin > 0
         dist = (group.y - unit.y).abs + (group.x - unit.x).abs
         if dist < min_dist
           near_group = group

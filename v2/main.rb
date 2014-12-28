@@ -37,6 +37,10 @@ loop do
     map.add_enemy Unit.load_enemy(gets)
   end
 
+  map.neets.each do |worker|
+    groups.attach(worker)
+  end
+
   resources_count = gets.to_i
   resources_count.times do |i|
     resource = map.add_resource(Resource.load(gets))
@@ -62,12 +66,14 @@ loop do
     end
   end
 
-  map.neet_workers.each do |worker|
-    groups.attach(worker)
-  end
-
   map.die_tmp_villages
   dead_units = map.clean_dead_units
+
+  if groups.battler_groups.size < 3
+    map.bases.each do |base|
+      groups.create(1, {knight: 3..3, fighter: 3..3, assassin: 4..4}, [{x: base.x, y: base.y}, {enemy_castle: true}])
+    end
+  end
 
   groups.clean(dead_units)
   groups.move(map)

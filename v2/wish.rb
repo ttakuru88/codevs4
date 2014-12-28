@@ -27,6 +27,39 @@ class Wish
     end
   end
 
+  def create_knight(map)
+    near_factory = map.near_battler_factory(y, x)
+    if near_factory
+      near_factory.create_knight
+      unit.creating_knight += 1
+      true
+    else
+      false
+    end
+  end
+
+  def create_fighter(map)
+    near_factory = map.near_battler_factory(y, x)
+    if near_factory
+      near_factory.create_fighter
+      unit.creating_fighter += 1
+      true
+    else
+      false
+    end
+  end
+
+  def create_assassin(map)
+    near_factory = map.near_battler_factory(y, x)
+    if near_factory
+      near_factory.create_assassin
+      unit.creating_assassin += 1
+      true
+    else
+      false
+    end
+  end
+
   def create_village(map)
     unit.create_village
   end

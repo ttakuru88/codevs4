@@ -51,7 +51,24 @@ class Map < Cell
     factory
   end
 
-  def expect_enemy_castle_cell
+  def near_battler_factory(y, x)
+    factory = nil
+    min_dist = 101 + 101
+
+    bases.each do |base|
+      dist = (base.y - y).abs + (base.x - x).abs
+      if dist < min_dist
+        min_dist = dist
+        factory = base
+      end
+    end
+
+    factory
+  end
+
+  def expect_enemy_castle_position
+    return enemy_castle if enemy_castle
+
     60.upto(99) do |y|
       60.upto(99) do |x|
         next if y + x < 160

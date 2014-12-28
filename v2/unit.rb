@@ -65,6 +65,18 @@ class Unit
     self.action = :create_base
   end
 
+  def create_fighter
+    self.action = :create_fighter
+  end
+
+  def create_knight
+    self.action = :create_knight
+  end
+
+  def create_assassin
+    self.action = :create_assassin
+  end
+
   def move_to(to_y, to_x)
     if y < to_y
       self.action = :down
@@ -100,6 +112,18 @@ class Unit
 
   def worker?
     self.instance_of?(Worker)
+  end
+
+  def fighter?
+    self.instance_of?(Fighter)
+  end
+
+  def knight?
+    self.instance_of?(Knight)
+  end
+
+  def assassin?
+    self.instance_of?(Assassin)
   end
 
   def finish_work(work_manager)

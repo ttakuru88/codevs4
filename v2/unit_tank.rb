@@ -12,12 +12,28 @@ class UnitTank
     units.select { |u| u.instance_of?(Worker) }
   end
 
+  def fighters
+    units.select { |u| u.instance_of?(Fighter) }
+  end
+
+  def knights
+    units.select { |u| u.instance_of?(Knight) }
+  end
+
+  def assassins
+    units.select { |u| u.instance_of?(Assassin) }
+  end
+
   def waiting_capturers
     units.select { |u| u.waiting? && u.capturer }
   end
 
   def neet_workers
     workers.select { |u| !u.group }
+  end
+
+  def neets
+    units.select { |u| (u.worker? || u.knight? || u.fighter? || u.assassin?) && !u.group }
   end
 
   def battlers
