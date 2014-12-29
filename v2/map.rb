@@ -51,6 +51,22 @@ class Map < Cell
     factory
   end
 
+  def nearest_enemy_castle_worker
+    target = expect_enemy_castle_position
+    min_dist = 101 + 101
+    nearest_worker = nil
+
+    workers.each do |worker|
+      dist = (target.y - worker.y).abs + (target.x - worker.x).abs
+      if dist < min_dist
+        min_dist = dist
+        nearest_worker = worker
+      end
+    end
+
+    [nearest_worker, min_dist]
+  end
+
   def near_battler_factory(y, x)
     factory = nil
     min_dist = 101 + 101
