@@ -77,6 +77,8 @@ class Map < Cell
         return at(y, x) unless cell.known
       end
     end
+
+    return at(80, 80)
   end
 
   def add_unit(unit)
