@@ -52,7 +52,7 @@ loop do
 
   if turn == 0
     11.times do |i|
-      y = i * 9 + 4
+      y = (10-i) * 9 + 4
       groups.create(10, {worker: 1..1}, [{x: map.castle.x, y: y},
                                          {x: 99, y: y}])
     end
