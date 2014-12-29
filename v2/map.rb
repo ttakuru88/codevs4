@@ -85,8 +85,8 @@ class Map < Cell
   def expect_enemy_castle_position
     return enemy_castle if enemy_castle
 
-    60.upto(99) do |y|
-      60.upto(99) do |x|
+    99.downto(60) do |y|
+      99.downto(60) do |x|
         next if y + x < 160
 
         cell = at(y, x)
