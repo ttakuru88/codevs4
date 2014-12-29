@@ -20,7 +20,7 @@ class Group < UnitTank
   end
 
   def move(map)
-    if required_units?(map) && !finished?
+    if active || required_units?(map)
       to_x = to_y = nil
       if next_point[:enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
@@ -46,14 +46,14 @@ class Group < UnitTank
     require_unit = require_units.find { |unit_type, data| unit_type == unit.to_sym }
     return true unless require_unit
 
-    require_unit[1].max <= send("#{unit.to_sym}s").size
+    require_unit[1] <= send("#{unit.to_sym}s").size
   end
 
   def required_units?(map)
     cell = map.at(y, x)
     require_units.all? do |unit_type, require_data|
       units_method = "#{unit_type}s"
-      require_data.min <= (send(units_method) & cell.send(units_method)).size
+      require_data <= (send(units_method) & cell.send(units_method)).size
     end
   end
 
@@ -71,7 +71,7 @@ class Group < UnitTank
     require_units.each do |unit_type, require_data|
       units_method = "#{unit_type}s"
       cost = instance_eval("#{unit_type.to_s[0].upcase}#{unit_type.to_s[1..-1]}")::RESOURCE
-      if require_data.max > send(units_method).size
+      if require_data > send(units_method).size
         wish_list << Wish.new("create_#{unit_type}".to_sym, cost, y, x, primary, self)
       end
     end

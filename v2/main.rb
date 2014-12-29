@@ -45,7 +45,7 @@ loop do
   resources_count.times do |i|
     resource = map.add_resource(Resource.load(gets))
     if resource
-      groups.create(10, {worker: 5..5}, [{x: resource.x, y: resource.y, wait: true}])
+      groups.create(10, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
     end
   end
   gets
@@ -54,14 +54,14 @@ loop do
     10.downto(0) do |i|
       y = i * 9 + 4
       worker_count = i > 7 ? 2 : 1
-      groups.create(10, {worker: worker_count..worker_count}, [{x: map.castle.x, y: y},
-                                         {x: 99, y: y}, {enemy_castle: true}])
+      groups.create(10, {worker: worker_count}, [{x: map.castle.x, y: y},
+                                         {x: 99, y: y}, {enemy_castle: true, wait: true}])
     end
 
     x = map.castle.x - 8
     while x > 0
-      groups.create(10, {worker: 1..1}, [{x: x, y: 0},
-                                         {x: x, y: 99}, {enemy_castle: true}])
+      groups.create(10, {worker: 1}, [{x: x, y: 0},
+                                      {x: x, y: 99}, {enemy_castle: true, wait: true}])
 
       x -= 9
     end
@@ -72,9 +72,9 @@ loop do
   groups.clean(dead_units)
   groups.clean_destroyed_group
 
-  if groups.battler_groups.size < 3
+  if groups.battler_groups.size < 2
     map.bases.each do |base|
-      groups.create(1, {knight: 3..3, fighter: 3..3, assassin: 4..4}, [{x: base.x, y: base.y}, {enemy_castle: true}])
+      groups.create(1, {knight: 10, fighter: 10, assassin: 10}, [{x: base.x, y: base.y}, {enemy_castle: true, wait: true}])
     end
   end
 
