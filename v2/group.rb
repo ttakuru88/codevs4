@@ -50,15 +50,8 @@ class Group < UnitTank
   def required_units?(map)
     cell = map.at(y, x)
     require_units.all? do |unit_type, require_data|
-      if unit_type == :worker
-        require_data.min <= (workers & cell.workers).size
-      elsif unit_type == :fighter
-        require_data.min <= (fighters & cell.fighters).size
-      elsif unit_type == :knight
-        require_data.min <= (knights & cell.knights).size
-      elsif unit_type == :assassin
-        require_data.min <= (assassins & cell.assassins).size
-      end
+      units_method = "#{unit_type}s"
+      require_data.min <= (send(units_method) & cell.send(units_method)).size
     end
   end
 
@@ -74,22 +67,10 @@ class Group < UnitTank
     wish_list = []
 
     require_units.each do |unit_type, require_data|
-      if unit_type == :worker
-        if require_data.max > workers.size
-          wish_list << Wish.new(:create_worker, Worker::RESOURCE, y, x, primary, self)
-        end
-      elsif unit_type == :fighter
-        if require_data.max > fighters.size
-          wish_list << Wish.new(:create_fighter, Fighter::RESOURCE, y, x, primary, self)
-        end
-      elsif unit_type == :knight
-        if require_data.max > knights.size
-          wish_list << Wish.new(:create_knight, Knight::RESOURCE, y, x, primary, self)
-        end
-      elsif unit_type == :assassin
-        if require_data.max > assassins.size
-          wish_list << Wish.new(:create_assassin, Assassin::RESOURCE, y, x, primary, self)
-        end
+      units_method = "#{unit_type}s"
+      cost = instance_eval("#{unit_type.to_s[0].upcase}#{unit_type.to_s[1..-1]}")::RESOURCE
+      if require_data.max > send(units_method).size
+        wish_list << Wish.new("create_#{unit_type}".to_sym, cost, y, x, primary, self)
       end
     end
 
