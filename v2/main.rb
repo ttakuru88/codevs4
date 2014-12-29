@@ -69,6 +69,7 @@ loop do
 
   map.die_tmp_villages
   dead_units = map.clean_dead_units
+  groups.clean(dead_units)
   groups.clean_destroyed_group
 
   if groups.battler_groups.size < 3
@@ -77,7 +78,6 @@ loop do
     end
   end
 
-  groups.clean(dead_units)
   groups.move(map)
 
   wish_list = []

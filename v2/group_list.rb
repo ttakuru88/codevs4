@@ -25,7 +25,7 @@ class GroupList
   end
 
   def clean_destroyed_group
-    self.groups = groups.reject { |g| g.finished? && g.units.size <= 0 }
+    self.groups = groups.reject { |g| g.active && g.units.size <= 0 }
   end
 
   def nearest_unfull_group(unit)

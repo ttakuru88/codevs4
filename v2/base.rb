@@ -8,7 +8,7 @@ class Base < Unit
 
     worker, min_dist = map.nearest_enemy_castle_worker
     STDERR.puts min_dist
-    if worker && min_dist < 10
+    if worker && min_dist < 20
       wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 9, worker)
     end
 

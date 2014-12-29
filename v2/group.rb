@@ -1,5 +1,5 @@
 class Group < UnitTank
-  attr_accessor :require_units, :points, :next_point_index, :primary
+  attr_accessor :require_units, :points, :next_point_index, :primary, :active
 
   def initialize(primary, require_units, points)
     super(points[0][:y], points[0][:x])
@@ -8,6 +8,7 @@ class Group < UnitTank
     self.points            = points
     self.next_point_index  = 0
     self.primary           = primary
+    self.active            = false
   end
 
   def finished?
@@ -30,6 +31,7 @@ class Group < UnitTank
         to_x = next_point[:x]
       end
 
+      self.active = true
       if move_to(to_y, to_x)
         self.next_point_index += 1
       end
