@@ -32,7 +32,7 @@ class UnitTank
     workers.select { |u| !u.group }
   end
 
-  def neets
+  def standalones
     units.select { |u| (u.worker? || u.knight? || u.fighter? || u.assassin?) && !u.group }
   end
 

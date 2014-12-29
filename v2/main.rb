@@ -37,7 +37,7 @@ loop do
     map.add_enemy Unit.load_enemy(gets)
   end
 
-  map.neets.each do |worker|
+  map.standalones.each do |worker|
     groups.attach(worker)
   end
 
@@ -55,13 +55,13 @@ loop do
       y = i * 9 + 4
       worker_count = i > 7 ? 2 : 1
       groups.create(10, {worker: worker_count..worker_count}, [{x: map.castle.x, y: y},
-                                         {x: 99, y: y}])
+                                         {x: 99, y: y}, {enemy_castle: true}])
     end
 
     x = map.castle.x - 8
     while x > 0
       groups.create(10, {worker: 1..1}, [{x: x, y: 0},
-                                         {x: x, y: 99}])
+                                         {x: x, y: 99}, {enemy_castle: true}])
 
       x -= 9
     end
