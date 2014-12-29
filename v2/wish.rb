@@ -20,7 +20,6 @@ class Wish
     near_worker_factory = map.near_worker_factory(y, x)
     if near_worker_factory
       near_worker_factory.create_worker
-      unit.creating_worker += 1
       true
     else
       false
@@ -31,7 +30,6 @@ class Wish
     near_factory = map.near_battler_factory(y, x)
     if near_factory
       near_factory.create_knight
-      unit.creating_knight += 1
       true
     else
       false
@@ -42,7 +40,6 @@ class Wish
     near_factory = map.near_battler_factory(y, x)
     if near_factory
       near_factory.create_fighter
-      unit.creating_fighter += 1
       true
     else
       false
@@ -53,7 +50,6 @@ class Wish
     near_factory = map.near_battler_factory(y, x)
     if near_factory
       near_factory.create_assassin
-      unit.creating_assassin += 1
       true
     else
       false

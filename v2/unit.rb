@@ -25,6 +25,10 @@ class Unit
     unit
   end
 
+  def to_sym
+    self.class.to_s.downcase.to_sym
+  end
+
   def self.load(input)
     data = input.split(' ').map(&:to_i)
 
