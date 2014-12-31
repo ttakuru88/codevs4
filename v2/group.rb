@@ -1,7 +1,7 @@
 class Group < UnitTank
-  attr_accessor :require_units, :points, :next_point_index, :primary, :active
+  attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active
 
-  def initialize(primary, require_units, points)
+  def initialize(primary, require_units, points, id)
     super(points[0][:y], points[0][:x])
 
     self.require_units     = require_units
@@ -9,6 +9,7 @@ class Group < UnitTank
     self.next_point_index  = 0
     self.primary           = primary
     self.active            = false
+    self.id                = id
   end
 
   def finished?
@@ -19,13 +20,25 @@ class Group < UnitTank
     require_units.include?(:fighter) || require_units.include?(:knight) || require_units.include?(:assassin)
   end
 
+  DP = [
+    {x: -5, y: -5},
+    {x:  5, y: -5},
+    {x: -5, y:  5},
+    {x:  5, y:  5}
+  ]
+
   def move(map)
-    if active || required_units?(map)
+    if (active || required_units?(map)) && next_point
       to_x = to_y = nil
       if next_point[:enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
         to_y = enemy_castle.y
         to_x = enemy_castle.x
+      elsif next_point[:near_enemy_castle]
+        enemy_castle = map.expect_enemy_castle_position
+
+        to_y = enemy_castle.y + DP[id % 4][:x]
+        to_x = enemy_castle.x + DP[id % 4][:y]
       else
         to_y = next_point[:y]
         to_x = next_point[:x]

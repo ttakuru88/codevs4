@@ -1,14 +1,14 @@
 class Base < Unit
   RESOURCE = 500.freeze
 
-  def self.wishes(map)
-    return [] if map.bases.size >= 1
+  def self.wishes(map, resources_rest)
+    return [] if map.bases.size >= 2 && resources_rest < RESOURCE
 
     wish_list = []
 
     worker, min_dist = map.nearest_enemy_castle_worker
     if worker && min_dist < 20
-      wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 9, worker)
+      wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 8, worker)
     end
 
     wish_list

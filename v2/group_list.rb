@@ -1,13 +1,16 @@
 class GroupList
-  attr_accessor :groups
+  attr_accessor :groups, :next_id
 
   def initialize
     self.groups = []
+    self.next_id = 0
   end
 
   def create(primary, units, points)
-    group = Group.new(primary, units, points)
+    group = Group.new(primary, units, points, next_id)
     self.groups << group
+
+    self.next_id += 1
 
     group
   end
