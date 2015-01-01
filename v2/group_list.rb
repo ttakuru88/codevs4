@@ -23,6 +23,10 @@ class GroupList
     end
   end
 
+  def all
+    groups
+  end
+
   def battler_groups
     groups.select { |g| g.include_battler? }
   end

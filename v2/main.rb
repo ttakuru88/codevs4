@@ -72,12 +72,14 @@ loop do
   groups.clean(dead_units)
   groups.clean_destroyed_group
 
-  if groups.battler_groups.size < 3
-    map.bases.each do |base|
-      list = [{knight: 10}, {fighter: 10}, {assassin: 10}]
-#      list = [{fighter: 5, assassin: 5}]
-      groups.create(1, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
-    end
+  map.set_group(groups.all)
+
+  map.bases.each do |base|
+    next if map.at(base.y, base.x).battler_groups.size > 0
+
+#    list = [{knight: 10}, {fighter: 10}, {assassin: 10}]
+    list = [{knight: 4, fighter: 3, assassin: 3}]
+    groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
   end
 
   groups.move(map)

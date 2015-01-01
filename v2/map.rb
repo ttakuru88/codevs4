@@ -36,6 +36,12 @@ class Map < Cell
     map[y][x]
   end
 
+  def set_group(groups)
+    groups.each do |group|
+      map[group.y][group.x].groups << group
+    end
+  end
+
   def near_worker_factory(y, x)
     factory = castle
     min_dist = (castle.y - y).abs + (castle.x - x).abs
