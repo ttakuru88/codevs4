@@ -45,7 +45,7 @@ class Group < UnitTank
       if next_point[:enemy_resource]
         resource = map.nearest_exists_enemy_resource(self)
         if resource
-          points.insert(next_point_index, {x: resource.x, y: resource.y})
+          points.insert(next_point_index, {x: resource.x, y: resource.y, wait: true})
         else
           points.insert(next_point_index, {enemy_castle: true})
         end

@@ -121,6 +121,8 @@ class Map < Cell
       99.downto(60) do |x|
         next if y + x < 160
 
+        y = 95 if y > 95
+        x = 95 if x > 95
         cell = at(y, x)
         return at(y, x) unless cell.known
       end
@@ -176,7 +178,8 @@ class Map < Cell
     min_dist = 101 + 101
 
     resources.each do |resource|
-      next if !resource.exists_enemy && resource.exists_unit
+      cell = at(resource.y, resource.x)
+      next if !resource.exists_enemy && resource.exists_unit || cell.groups.size > 0
 
       dist = (from.x - resource.x).abs + (from.y - resource.y).abs
       if min_dist > dist

@@ -91,7 +91,7 @@ loop do
     if base == nearest_base && dist < 100
       list = [{knight: 1}, {fighter: 1}, {assassin: 1}]
       if map.near_castle_battlers.size < 40
-        groups.create(7, list[2], [{x: base.x, y: base.y}, {near_castle: true}])
+        groups.create(7, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
       else
         list = [{knight: 1, fighter: 1, assassin: 1}]
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
