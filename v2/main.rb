@@ -59,7 +59,6 @@ loop do
     end
 
     x = map.castle.x - 9
-    STDERR.puts x
     while x >= -4
       px = [0, x].max
       groups.create(10, {worker: 1}, [{x: px, y: 0},
@@ -98,7 +97,7 @@ loop do
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
       end
     else
-      if rand < 0.2
+      if rand < 0.3
         list = [{knight: 1, fighter: 1, assassin: 1}]
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
       else
