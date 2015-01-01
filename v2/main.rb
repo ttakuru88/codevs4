@@ -88,7 +88,7 @@ loop do
 
   map.bases.each do |base|
     next if map.at(base.y, base.x).battler_groups.size > 0
-    unit_weight = 5
+    unit_weight = 4
     list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
 
     groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
