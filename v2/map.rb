@@ -177,13 +177,35 @@ class Map < Cell
     resources.select { |v| (v.y-y).abs + (v.x-x).abs < range }
   end
 
+  def nearest_unguard_resource(from)
+    nearest_resource = nil
+    min_dist = 101 + 101
+
+    unguard_resources.each do |resource|
+      cell = at(resource.y, resource.x)
+      next if !resource.exists_enemy && resource.exists_unit
+
+      dist = (from.x - resource.x).abs + (from.y - resource.y).abs
+      if min_dist > dist
+        min_dist = dist
+        nearest_resource = resource
+      end
+    end
+
+    nearest_resource
+  end
+
+  def unguard_resources
+    resources.reject(&:exists_guardian)
+  end
+
   def nearest_exists_enemy_resource(from)
     nearest_resource = nil
     min_dist = 101 + 101
 
     resources.each do |resource|
       cell = at(resource.y, resource.x)
-      next if !resource.exists_enemy && resource.exists_unit || cell.groups.size > 0
+      next if !resource.exists_enemy && resource.exists_unit
 
       dist = (from.x - resource.x).abs + (from.y - resource.y).abs
       if min_dist > dist

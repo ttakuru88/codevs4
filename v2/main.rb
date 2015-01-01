@@ -88,15 +88,15 @@ loop do
   map.bases.each do |base|
     next if map.at(base.y, base.x).battler_groups.size > 0
 
-    unit_weight = if groups.attacker_count < 1
-      1
+
+    if turn > 350 && rand < 0.7
+      list = [{knight: 1, fighter: 1, assassin: 1}]
+      groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
     else
-      4
+      unit_weight = groups.attacker_count < 1 ? 1 : 4
+      list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
+      groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
     end
-
-    list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
-
-    groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
   end
 
   if map.danger_castle?

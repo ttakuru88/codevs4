@@ -59,9 +59,16 @@ class Group < UnitTank
     if (active || required_units?) && next_point
       to_x = to_y = nil
       if next_point[:enemy_resource]
-        resource = map.nearest_exists_enemy_resource(self)
+        # resource = map.nearest_exists_enemy_resource(self)
+        # if resource
+        #   points.insert(next_point_index, {x: resource.x, y: resource.y})
+        # else
+        #   points.insert(next_point_index, {enemy_castle: true})
+        # end
+        resource = map.nearest_unguard_resource(self)
         if resource
           points.insert(next_point_index, {x: resource.x, y: resource.y, wait: true})
+          resource.exists_guardian = true
         else
           points.insert(next_point_index, {enemy_castle: true})
         end
@@ -94,7 +101,7 @@ class Group < UnitTank
       to_x = 99 if to_x > 99
       to_y = 0 if to_y < 0
       to_x = 0 if to_x < 0
-      if move_to(to_y, to_x)
+      if move_to(to_y, to_x, map)
         self.next_point_index += 1
       end
     end
@@ -161,17 +168,53 @@ class Group < UnitTank
 
   private
 
-  def move_to(to_y, to_x)
+  def move_to(to_y, to_x, map)
+    dy = nil
+    dx = nil
+
     if y < to_y
-      self.y += 1
+      dy = 1
     elsif y > to_y
-      self.y -= 1
-    elsif x < to_x
-      self.x += 1
+      dy = -1
+    end
+
+    if x < to_x
+      dx = 1
     elsif x > to_x
-      self.x -= 1
-    else
+      dx = -1
+    end
+
+    if dy.nil? && dx.nil?
       return !next_point[:wait]
+    end
+
+    if dy.nil?
+      self.x += dx
+    elsif dx.nil?
+      self.y += dy
+    else
+      y_enemies = 0
+      x_enemies = 0
+
+      1.upto(4) do |i|
+        my = y + i * dy
+        y_enemies += map.at(my, x).enemies.size if my >= 0 && my < 100
+
+        mx = x + i * dx
+        x_enemies += map.at(y, mx).enemies.size if mx >= 0 && mx < 100
+      end
+
+      if y_enemies > x_enemies
+        self.x += dx
+      elsif x_enemies > y_enemies
+        self.y += dy
+      else
+        if rand < 0.5
+          self.x += dx
+        else
+          self.y += dy
+        end
+      end
     end
 
     return false
