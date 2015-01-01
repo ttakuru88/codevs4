@@ -88,31 +88,10 @@ loop do
 
   map.bases.each do |base|
     next if map.at(base.y, base.x).battler_groups.size > 0
+    unit_weight = 5
+    list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
 
-    nearest_base, dist = map.nearest_base(map.castle)
-    if base == nearest_base && dist < 100
-      danger = map.danger_castle?
-
-      if map.near_castle_battlers.size < 20 || danger
-        list = [{knight: 1}, {fighter: 1}, {assassin: 1}]
-        groups.create(8 - (danger ? 1 : 0 ), list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
-      else
-        list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
-      end
-    else
-      primary = turn < 200 ? 7 : 8
-
-      if rand < 0.2
-        list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
-      else
-        unit_weight = [groups.attacker_count + 1, 3].min
-        list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
-
-        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
-      end
-    end
+    groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
   end
 
   groups.move(map)

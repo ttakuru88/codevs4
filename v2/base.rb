@@ -2,7 +2,7 @@ class Base < Unit
   RESOURCE = 500.freeze
 
   def self.wishes(map, resources_rest, turn)
-    return [] if map.bases.size >= 2 && resources_rest < RESOURCE
+    return [] if map.bases.size >= 1 && resources_rest < RESOURCE
 
     wish_list = []
 
@@ -10,15 +10,8 @@ class Base < Unit
     if worker && min_dist <= 40
       nearest_base, base_dist = map.nearest_base(map.castle)
 
-      if nearest_base && base_dist >= 100 && turn > 200
-        worker, min_dist = map.nearest_worker(map.castle)
-        if worker
-          wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 6, worker)
-        else
-          wish_list << Wish.new(:create_worker, Worker::RESOURCE, map.castle.y, map.castle.x, 6, map.castle)
-        end
-      elsif min_dist >= 10
-        wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 8, worker)
+      if min_dist >= 10
+        wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 7, worker)
       end
     end
 
