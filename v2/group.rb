@@ -21,10 +21,22 @@ class Group < UnitTank
   end
 
   DP = [
-    {x: -5, y: -5},
-    {x:  5, y: -5},
-    {x: -5, y:  5},
-    {x:  5, y:  5}
+    {x: -8, y: -8},
+    {x:  8, y: -8},
+    {x: -8, y:  8},
+    {x:  8, y:  8}
+  ]
+
+  MDP = [
+#    {x: -1, y: -1},
+    {x:  0, y: -1},
+#    {x:  1, y: -1},
+    {x: -1, y:  0},
+#    {x:  0, y:  0},
+    {x:  1, y:  0},
+#    {x: -1, y:  1},
+    {x:  0, y:  1},
+#    {x:  1, y:  1},
   ]
 
   def move(map)
@@ -34,11 +46,14 @@ class Group < UnitTank
         enemy_castle = map.expect_enemy_castle_position
         to_y = enemy_castle.y
         to_x = enemy_castle.x
+      elsif next_point[:near_castle]
+        to_y = map.castle.y + MDP[id % MDP.size][:y]
+        to_x = map.castle.x + MDP[id % MDP.size][:x]
       elsif next_point[:near_enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
 
-        to_y = enemy_castle.y + DP[id % 4][:x]
-        to_x = enemy_castle.x + DP[id % 4][:y]
+        to_y = enemy_castle.y + DP[id % DP.size][:x]
+        to_x = enemy_castle.x + DP[id % DP.size][:y]
       else
         to_y = next_point[:y]
         to_x = next_point[:x]
@@ -48,6 +63,8 @@ class Group < UnitTank
 
       to_y = 99 if to_y > 99
       to_x = 99 if to_x > 99
+      to_y = 0 if to_y < 0
+      to_x = 0 if to_x < 0
       if move_to(to_y, to_x)
         self.next_point_index += 1
       end

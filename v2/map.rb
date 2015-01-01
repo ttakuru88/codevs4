@@ -87,6 +87,21 @@ class Map < Cell
     factory
   end
 
+  def nearest_base(target)
+    min_dist = 101 + 101
+    nearest_base = nil
+
+    bases.each do |base|
+      dist = (target.y - base.y).abs + (target.x - base.x).abs
+      if dist < min_dist
+        min_dist = dist
+        nearest_base = base
+      end
+    end
+
+    [nearest_base, min_dist]
+  end
+
   def expect_enemy_castle_position
     return enemy_castle if enemy_castle
 

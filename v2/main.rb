@@ -77,9 +77,15 @@ loop do
   map.bases.each do |base|
     next if map.at(base.y, base.x).battler_groups.size > 0
 
-#    list = [{knight: 10}, {fighter: 10}, {assassin: 10}]
-    list = [{knight: 4, fighter: 3, assassin: 3}]
-    groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+    nearest_base, dist = map.nearest_base(map.castle)
+    if base == nearest_base && dist < 100
+      list = [{knight: 1}, {fighter: 1}, {assassin: 1}]
+      groups.create(7, list[2], [{x: base.x, y: base.y}, {near_castle: true}])
+    else
+      list = [{knight: 4, fighter: 3, assassin: 3}]
+#      list = [{assassin: 10}]
+      groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+    end
   end
 
   groups.move(map)
