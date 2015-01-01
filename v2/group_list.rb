@@ -1,9 +1,10 @@
 class GroupList
-  attr_accessor :groups, :next_id
+  attr_accessor :groups, :next_id, :attacker_count
 
   def initialize
     self.groups = []
     self.next_id = 0
+    self.attacker_count = 0
   end
 
   def create(primary, units, points)
@@ -11,6 +12,8 @@ class GroupList
     self.groups << group
 
     self.next_id += 1
+
+    self.attacker_count += 1 if group.attacker?
 
     group
   end

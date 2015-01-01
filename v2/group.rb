@@ -16,6 +16,10 @@ class Group < UnitTank
     !next_point
   end
 
+  def attacker?
+    include_battler? && x + y > 100
+  end
+
   def include_battler?
     require_units.include?(:fighter) || require_units.include?(:knight) || require_units.include?(:assassin)
   end
@@ -93,7 +97,9 @@ class Group < UnitTank
 
     units.each do |unit|
       dp = DDP.find do |dp|
-        at_units(y + dp[:y], x + dp[:x]).size < 10
+        dx = x + dp[:x]
+        dy = y + dp[:y]
+        dx < 100 && dy < 100 && dx >= 0 && dy >= 0 && at_units(dy, dx).size < 10
       end
 
       dp ||= DDP[0]

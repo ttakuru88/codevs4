@@ -6,7 +6,7 @@ class Worker < Unit
     return false if near_resources.size <= 0
 
     near_resources.all? do |resource|
-      map.near_villages(resource.y, resource.x).size <= 0
+      map.near_villages(resource.y, resource.x).size <= 0 && map.near_villages(y, x).size <= 0
     end
   end
 end
