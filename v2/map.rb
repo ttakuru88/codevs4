@@ -119,7 +119,7 @@ class Map < Cell
 
     99.downto(60) do |py|
       99.downto(60) do |px|
-        next if py + px < 160
+        next if py + px < 158
 
         cell = at(py, px)
         return cell unless cell.known
