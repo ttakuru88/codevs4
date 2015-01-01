@@ -57,8 +57,7 @@ class Map < Cell
     factory
   end
 
-  def nearest_enemy_castle_worker
-    target = expect_enemy_castle_position
+  def nearest_worker(target)
     min_dist = 101 + 101
     nearest_worker = nil
 

@@ -45,6 +45,9 @@ class Group < UnitTank
       end
 
       self.active = true
+
+      to_y = 99 if to_y > 99
+      to_x = 99 if to_x > 99
       if move_to(to_y, to_x)
         self.next_point_index += 1
       end
