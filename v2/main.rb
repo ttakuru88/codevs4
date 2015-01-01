@@ -58,10 +58,12 @@ loop do
                                          {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
     end
 
-    x = map.castle.x - 8
-    while x > 0
-      groups.create(10, {worker: 1}, [{x: x, y: 0},
-                                      {x: x, y: 99}, {near_enemy_castle: true, wait: true}])
+    x = map.castle.x - 9
+    STDERR.puts x
+    while x >= -4
+      px = [0, x].max
+      groups.create(10, {worker: 1}, [{x: px, y: 0},
+                                      {x: px, y: 99}, {near_enemy_castle: true, wait: true}])
 
       x -= 9
     end
