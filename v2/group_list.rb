@@ -38,6 +38,10 @@ class GroupList
     self.groups = groups.reject { |g| g.active && g.units.size <= 0 }
   end
 
+  def resource_groups
+    groups.select(&:in_resource?)
+  end
+
   def nearest_unfull_group(unit, map)
     near_group = nil
     min_dist = 101 + 101

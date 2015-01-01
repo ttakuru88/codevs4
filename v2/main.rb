@@ -88,7 +88,7 @@ loop do
   map.bases.each_with_index do |base, i|
     next if map.at(base.y, base.x).battler_groups.size > 0
 
-    if i > 0
+    if i == 1 && map.nearest_unguard_resource(base)
       list = [{knight: 1, fighter: 1, assassin: 1}]
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
     else
@@ -100,6 +100,12 @@ loop do
 
   if map.danger_castle?
     groups.create(6, {worker: 1}, [{x: map.castle.x, y: map.castle.y, wait: true}])
+  end
+
+  groups.resource_groups.each do |group|
+    cell = map.at(group.y, group.x)
+    resource = cell.resources[0]
+    group.primary = (resource.exists_unit && !resource.exists_enemy) ? 7 : 8
   end
 
   groups.move(map)
