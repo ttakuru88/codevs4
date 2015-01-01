@@ -17,7 +17,7 @@ class Base < Unit
         else
           wish_list << Wish.new(:create_worker, Worker::RESOURCE, map.castle.y, map.castle.x, 6, map.castle)
         end
-      elsif min_dist >= 20
+      else
         wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 8, worker)
       end
     end

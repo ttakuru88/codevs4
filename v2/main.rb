@@ -53,16 +53,18 @@ loop do
   if turn == 0
     10.downto(0) do |i|
       y = i * 9 + 4
-      worker_count = i > 7 ? 2 : 1
-      groups.create(10, {worker: worker_count}, [{x: map.castle.x, y: y},
-                                         {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
+      worker_count = 1 # i > 7 ? 2 : 1
+      groups.create(10, {worker: worker_count}, [{x: map.castle.x, y: map.castle.y},
+                                                 {x: map.castle.x, y: y},
+                                                 {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
     end
 
     x = map.castle.x - 9
     while x >= -4
       px = [0, x].max
-      groups.create(10, {worker: 1}, [{x: px, y: 0},
-                                      {x: px, y: 99}, {near_enemy_castle: true, wait: true}])
+      groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+                                     {x: px, y: 4},
+                                     {x: px, y: 95}, {near_enemy_castle: true, wait: true}])
 
       x -= 9
     end
@@ -90,18 +92,18 @@ loop do
     nearest_base, dist = map.nearest_base(map.castle)
     if base == nearest_base && dist < 100
       list = [{knight: 1}, {fighter: 1}, {assassin: 1}]
-      if map.near_castle_battlers.size < 40
+      if rand < 0.8 && map.near_castle_battlers.size < 40
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
       else
         list = [{knight: 1, fighter: 1, assassin: 1}]
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
       end
     else
-      if rand < 0.3
+      if rand < 0.2
         list = [{knight: 1, fighter: 1, assassin: 1}]
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
       else
-        list = [{knight: 4, fighter: 3, assassin: 3}]
+        list = [{knight: 12, fighter: 9, assassin: 9}]
   #      list = [{assassin: 10}]
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
       end
@@ -114,7 +116,7 @@ loop do
   wish_list += groups.wishes
   wish_list += Village.wishes(map)
   wish_list += Base.wishes(map, resources_rest)
-  wish_list = wish_list.sort_by(&:primary)
+  wish_list = wish_list.shuffle.sort_by(&:primary)
 
   wish_list.each do |wish|
     if resources_rest >= wish.cost

@@ -39,8 +39,20 @@ class Group < UnitTank
 #    {x:  1, y:  1},
   ]
 
+  DDP = [
+    {x:  0, y:  0},
+    {x: -1, y:  0},
+    {x:  1, y:  0},
+    {x:  0, y: -1},
+    {x: -1, y: -1},
+    {x:  1, y: -1},
+    {x:  0, y:  1},
+    {x: -1, y:  1},
+    {x:  1, y:  1},
+  ]
+
   def move(map)
-    if (active || required_units?(map)) && next_point
+    if (active || required_units?) && next_point
       to_x = to_y = nil
       if next_point[:enemy_resource]
         resource = map.nearest_exists_enemy_resource(self)
@@ -80,7 +92,19 @@ class Group < UnitTank
     end
 
     units.each do |unit|
-      unit.move_to(y, x)
+      dp = DDP.find do |dp|
+        at_units(y + dp[:y], x + dp[:x]).size < 10
+      end
+
+      dp ||= DDP[0]
+
+      unit.move_to!(y + dp[:y], x + dp[:x])
+    end
+  end
+
+  def at_units(on_y, on_x)
+    units.select do |unit|
+      unit.y == on_y && unit.x == on_x
     end
   end
 
@@ -91,11 +115,10 @@ class Group < UnitTank
     require_unit[1] <= send("#{unit.to_sym}s").size
   end
 
-  def required_units?(map)
-    cell = map.at(y, x)
+  def required_units?
     require_units.all? do |unit_type, require_data|
       units_method = "#{unit_type}s"
-      require_data <= (send(units_method) & cell.send(units_method)).size
+      require_data <= send(units_method).size
     end
   end
 

@@ -101,6 +101,22 @@ class Unit
     return false
   end
 
+  def move_to!(to_y, to_x)
+    ret = move_to(to_y, to_x)
+
+    if action == :down
+      self.y += 1
+    elsif action == :up
+      self.y -= 1
+    elsif action == :right
+      self.x += 1
+    elsif action == :left
+      self.x -= 1
+    end
+
+    ret
+  end
+
   def sight
     SIGHT
   end
