@@ -117,18 +117,14 @@ class Map < Cell
   def expect_enemy_castle_position
     return enemy_castle if enemy_castle
 
-    99.downto(60) do |y|
-      99.downto(60) do |x|
-        next if y + x < 160
+    99.downto(60) do |py|
+      99.downto(60) do |px|
+        next if py + px < 160
 
-        y = 95 if y > 95
-        x = 95 if x > 95
-        cell = at(y, x)
-        return at(y, x) unless cell.known
+        cell = at(py, px)
+        return cell unless cell.known
       end
     end
-
-    return at(80, 80)
   end
 
   def add_unit(unit)
