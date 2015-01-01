@@ -76,9 +76,13 @@ class Group < UnitTank
         to_x = map.castle.x + MDP[id % MDP.size][:x]
       elsif next_point[:near_enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
-
-        to_y = enemy_castle.y + DP[id % DP.size][:x]
-        to_x = enemy_castle.x + DP[id % DP.size][:y]
+        if enemy_castle
+          to_y = enemy_castle.y + DP[id % DP.size][:x]
+          to_x = enemy_castle.x + DP[id % DP.size][:y]
+        else
+          to_y = y
+          to_x = x
+        end
       else
         to_y = next_point[:y]
         to_x = next_point[:x]

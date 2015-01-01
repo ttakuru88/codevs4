@@ -2,7 +2,7 @@ class Map < Cell
   attr_accessor :map
 
   def turn_init
-    self.enemies = [enemy_castle]
+    self.enemies = [enemy_castle].compact
 
     self.units.each do |unit|
       unit.die = true
@@ -158,7 +158,7 @@ class Map < Cell
     enemies.any? do |enemy|
       dist = (enemy.y - castle.y).abs + (enemy.x - castle.x).abs
 
-      dist < 15
+      dist <= 1
     end
   end
 

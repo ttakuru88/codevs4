@@ -53,10 +53,9 @@ loop do
   if turn == 0
     10.downto(0) do |i|
       y = i * 9 + 4
-      worker_count = 1 # i > 7 ? 2 : 1
-      groups.create(10, {worker: worker_count}, [{x: map.castle.x, y: map.castle.y},
-                                                 {x: map.castle.x, y: y},
-                                                 {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
+      groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+                                      {x: map.castle.x, y: y},
+                                      {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
     end
 
     x = map.castle.x - 9
@@ -88,10 +87,20 @@ loop do
 
   map.bases.each do |base|
     next if map.at(base.y, base.x).battler_groups.size > 0
-    unit_weight = 4
+
+    unit_weight = if groups.attacker_count < 1
+      1
+    else
+      4
+    end
+
     list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
 
     groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+  end
+
+  if map.danger_castle?
+    groups.create(6, {worker: 1}, [{x: map.castle.x, y: map.castle.y, wait: true}])
   end
 
   groups.move(map)
