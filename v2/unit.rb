@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group, :dx, :dy
 
   # 0: worker
   # 1: knight
@@ -44,10 +44,16 @@ class Unit
     self.y  = data[1]
     self.x  = data[2]
     self.hp = data[3]
+    self.dx = nil
+    self.dy = nil
     self.action = :none
     self.die = false
     self.tasks = []
     self.capturer = false
+  end
+
+  def fixed_position?
+    !dx.nil? && !dy.nil?
   end
 
   def dead
@@ -102,6 +108,9 @@ class Unit
   end
 
   def move_to!(to_y, to_x)
+    to_y += dy.to_i
+    to_x += dx.to_i
+
     ret = move_to(to_y, to_x)
 
     if action == :down

@@ -96,15 +96,20 @@ class Group < UnitTank
     end
 
     units.each do |unit|
-      dp = DDP.find do |dp|
-        dx = x + dp[:x]
-        dy = y + dp[:y]
-        dx < 100 && dy < 100 && dx >= 0 && dy >= 0 && at_units(dy, dx).size < 10
+      if !unit.fixed_position?
+        dp = DDP.find do |dp|
+          dx = x + dp[:x]
+          dy = y + dp[:y]
+          dx < 100 && dy < 100 && dx >= 0 && dy >= 0 && at_units(dy, dx).size < 10
+        end
+
+        dp ||= DDP[0]
+
+        unit.dx = dp[:x]
+        unit.dy = dp[:y]
       end
 
-      dp ||= DDP[0]
-
-      unit.move_to!(y + dp[:y], x + dp[:x])
+      unit.move_to!(y, x)
     end
   end
 
