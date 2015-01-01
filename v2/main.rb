@@ -92,8 +92,12 @@ loop do
       list = [{knight: 1, fighter: 1, assassin: 1}]
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
     else
-      unit_weight = groups.attacker_count < 1 ? 2 : (map.bases.size > 1 ? 3 : 4)
-      list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
+      list = if !map.enemy_castle && groups.attacker_count < 5
+        [{knight: 1}, {fighter: 1}, {assassin: 1}]
+      else
+        unit_weight = groups.attacker_count < 1 ? 2 : (map.bases.size > 1 ? 3 : 4)
+        [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
+      end
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
     end
   end
