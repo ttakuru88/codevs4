@@ -18,8 +18,8 @@ class GroupList
     group
   end
 
-  def attach(unit)
-    group = nearest_unfull_group(unit)
+  def attach(unit, map)
+    group = nearest_unfull_group(unit, map)
     if group
       unit.group = group
       group.units << unit
@@ -38,12 +38,13 @@ class GroupList
     self.groups = groups.reject { |g| g.active && g.units.size <= 0 }
   end
 
-  def nearest_unfull_group(unit)
+  def nearest_unfull_group(unit, map)
     near_group = nil
     min_dist = 101 + 101
 
     groups.each do |group|
       next if group.full_units?(unit)
+      next if group.in_resource? && map.at(group.y, group.x).resources[0].exists_enemy
 
       dist = (group.y - unit.y).abs + (group.x - unit.x).abs
       if dist < min_dist

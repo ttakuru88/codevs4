@@ -19,8 +19,12 @@ class Wish
   def create_worker(map)
     near_worker_factory = map.near_worker_factory(y, x)
     if near_worker_factory
-      near_worker_factory.create_worker
-      true
+      if unit.in_resource? && map.at(unit.y, unit.x).resources[0].exists_enemy
+        false
+      else
+        near_worker_factory.create_worker
+        true
+      end
     else
       false
     end

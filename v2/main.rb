@@ -38,14 +38,14 @@ loop do
   end
 
   map.standalones.each do |worker|
-    groups.attach(worker)
+    groups.attach(worker, map)
   end
 
   resources_count = gets.to_i
   resources_count.times do |i|
     resource = map.add_resource(Resource.load(gets))
     if resource
-      groups.create(9, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
+      groups.create(8, {worker: 5}, [{resource: true, x: resource.x, y: resource.y, wait: true}])
     end
   end
   gets
@@ -85,15 +85,14 @@ loop do
     end
   end
 
-  map.bases.each do |base|
+  map.bases.each_with_index do |base, i|
     next if map.at(base.y, base.x).battler_groups.size > 0
 
-
-    if turn > 350 && rand < 0.7
+    if turn > 350 && rand < 0.7 || i > 0
       list = [{knight: 1, fighter: 1, assassin: 1}]
       groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
     else
-      unit_weight = groups.attacker_count < 1 ? 1 : 4
+      unit_weight = groups.attacker_count < 1 ? 1 : (map.bases.size > 1 ? 3 : 4)
       list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
       groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
     end

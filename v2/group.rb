@@ -166,6 +166,10 @@ class Group < UnitTank
     wish_list
   end
 
+  def in_resource?
+    !!(next_point && next_point[:resource])
+  end
+
   private
 
   def move_to(to_y, to_x, map)
