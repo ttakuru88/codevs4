@@ -99,14 +99,16 @@ loop do
         groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
       end
     else
+      primary = turn < 200 ? 7 : 8
+
       if rand < 0.2
         list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
+        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
       else
         unit_weight = [groups.attacker_count + 1, 3].min
         list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
 
-        groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
       end
     end
   end
@@ -116,7 +118,7 @@ loop do
   wish_list = []
   wish_list += groups.wishes
   wish_list += Village.wishes(map)
-  wish_list += Base.wishes(map, resources_rest)
+  wish_list += Base.wishes(map, resources_rest, turn)
   wish_list = wish_list.shuffle.sort_by(&:primary)
 
   wish_list.each do |wish|

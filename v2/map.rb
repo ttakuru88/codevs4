@@ -165,7 +165,7 @@ class Map < Cell
     unit
   end
 
-  def near_villages(y, x, range = 30)
+  def near_villages(y, x, range = 40)
     villages.select { |v| (v.y-y).abs + (v.x-x).abs < range }
   end
 
