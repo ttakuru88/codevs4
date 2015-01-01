@@ -120,7 +120,7 @@ class Group < UnitTank
         unit.dy = dp[:y]
       end
 
-      unit.move_to!(y, x)
+      unit.move_to!(y, x, map)
     end
   end
 

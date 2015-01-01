@@ -91,7 +91,7 @@ class Unit
     self.action = :create_assassin
   end
 
-  def move_to(to_y, to_x)
+  def move_to(to_y, to_x, map = nil)
     if y < to_y
       self.action = :down
     elsif y > to_y
@@ -107,11 +107,11 @@ class Unit
     return false
   end
 
-  def move_to!(to_y, to_x)
+  def move_to!(to_y, to_x, map = nil)
     to_y += dy.to_i
     to_x += dx.to_i
 
-    ret = move_to(to_y, to_x)
+    ret = move_to(to_y, to_x, map)
 
     if action == :down
       self.y += 1
