@@ -91,9 +91,11 @@ loop do
 
     nearest_base, dist = map.nearest_base(map.castle)
     if base == nearest_base && dist < 100
-      list = [{knight: 1}, {fighter: 1}, {assassin: 1}]
-      if rand <= 0.8 && map.near_castle_battlers.size < 40
-        groups.create(8, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
+      danger = map.danger_castle?
+
+      if map.near_castle_battlers.size < 20 || danger
+        list = [{knight: 1}, {fighter: 1}, {assassin: 1}]
+        groups.create(8 - (danger ? 1 : 0 ), list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
       else
         list = [{knight: 1, fighter: 1, assassin: 1}]
         groups.create(8, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])

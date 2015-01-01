@@ -158,6 +158,14 @@ class Map < Cell
     unit
   end
 
+  def danger_castle?
+    enemies.any? do |enemy|
+      dist = (enemy.y - castle.y).abs + (enemy.x - castle.x).abs
+
+      dist < 15
+    end
+  end
+
   def add_enemy(unit)
     self.enemies << unit unless unit.castle? && enemy_castle
     self.map[unit.y][unit.x].enemies << unit
