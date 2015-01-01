@@ -29,6 +29,10 @@ class Unit
     self.class.to_s.downcase.to_sym
   end
 
+  def sight?(target_y, target_x)
+    (x - target_x).abs + (y - target_y).abs <= sight
+  end
+
   def self.load(input)
     data = input.split(' ').map(&:to_i)
 

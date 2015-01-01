@@ -57,6 +57,18 @@ class Map < Cell
     factory
   end
 
+  def near_castle_battlers
+    unit_list = []
+    battlers.each do |battler|
+      dist = (castle.y - battler.group.y).abs + (castle.x - battler.group.x).abs
+      if dist <= 2
+        unit_list << battler
+      end
+    end
+
+    unit_list
+  end
+
   def nearest_worker(target)
     min_dist = 101 + 101
     nearest_worker = nil
@@ -159,17 +171,27 @@ class Map < Cell
     resources.select { |v| (v.y-y).abs + (v.x-x).abs < range }
   end
 
-  def near_exists_enemy_resource
-    max = 0
-    resource = nil
-    resources.each do |r|
-      if r.exists_enemy && max < r.x + r.y
-        max = r.x + r.y
-        resource = r
+  def nearest_exists_enemy_resource(from)
+    nearest_resource = nil
+    min_dist = 101 + 101
+
+    resources.each do |resource|
+      next if !resource.exists_enemy && resource.exists_unit
+
+      dist = (from.x - resource.x).abs + (from.y - resource.y).abs
+      if min_dist > dist
+        min_dist = dist
+        nearest_resource = resource
       end
     end
 
-    resource
+    nearest_resource
+  end
+
+  def sight?(y, x)
+    units.any? do |unit|
+      unit.sight?(y, x)
+    end
   end
 
   def farest_worker

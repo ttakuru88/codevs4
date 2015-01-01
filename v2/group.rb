@@ -21,10 +21,10 @@ class Group < UnitTank
   end
 
   DP = [
-    {x: -8, y: -8},
-    {x:  8, y: -8},
-    {x: -8, y:  8},
-    {x:  8, y:  8}
+    {x: -10, y: -10},
+    {x:  10, y: -10},
+    {x: -10, y:  10},
+    {x:  10, y:  10}
   ]
 
   MDP = [
@@ -42,6 +42,15 @@ class Group < UnitTank
   def move(map)
     if (active || required_units?(map)) && next_point
       to_x = to_y = nil
+      if next_point[:enemy_resource]
+        resource = map.nearest_exists_enemy_resource(self)
+        if resource
+          points.insert(next_point_index, {x: resource.x, y: resource.y})
+        else
+          points.insert(next_point_index, {enemy_castle: true})
+        end
+      end
+
       if next_point[:enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
         to_y = enemy_castle.y

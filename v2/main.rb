@@ -74,17 +74,36 @@ loop do
 
   map.set_group(groups.all)
 
+  map.resources.each do |resource|
+    cell = map.at(resource.y, resource.x)
+
+    resource.exists_unit = cell.units.size > 0
+    if map.sight?(resource.y, resource.x)
+      resource.exists_enemy = cell.enemies.size > 0
+    end
+  end
+
   map.bases.each do |base|
     next if map.at(base.y, base.x).battler_groups.size > 0
 
     nearest_base, dist = map.nearest_base(map.castle)
     if base == nearest_base && dist < 100
       list = [{knight: 1}, {fighter: 1}, {assassin: 1}]
-      groups.create(7, list[2], [{x: base.x, y: base.y}, {near_castle: true}])
+      if map.near_castle_battlers.size < 40
+        groups.create(7, list[2], [{x: base.x, y: base.y}, {near_castle: true}])
+      else
+        list = [{knight: 1, fighter: 1, assassin: 1}]
+        groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
+      end
     else
-      list = [{knight: 4, fighter: 3, assassin: 3}]
-#      list = [{assassin: 10}]
-      groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+      if rand < 0.2
+        list = [{knight: 1, fighter: 1, assassin: 1}]
+        groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
+      else
+        list = [{knight: 4, fighter: 3, assassin: 3}]
+  #      list = [{assassin: 10}]
+        groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+      end
     end
   end
 
