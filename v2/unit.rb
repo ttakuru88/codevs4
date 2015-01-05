@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group, :dx, :dy, :prev_hp
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group, :dx, :dy, :prev_hp, :prev_y, :prev_x, :prev
 
   # 0: worker
   # 1: knight
@@ -73,6 +73,7 @@ class Unit
     self.tasks = []
     self.capturer = false
     self.prev_hp = nil
+    self.prev = false
   end
 
   def fixed_position?
@@ -125,6 +126,21 @@ class Unit
     end
 
     return false
+  end
+
+  def update_prev_position
+    self.prev_y = y
+    self.prev_x = x
+
+    if action == :up
+      self.prev_y += 1
+    elsif action == :down
+      self.prev_y -= 1
+    elsif action == :right
+      self.prev_x -= 1
+    elsif action == :left
+      self.prev_x += 1
+    end
   end
 
   def move_to!(to_y, to_x, map = nil)

@@ -6,6 +6,7 @@ class Map < Cell
 
     self.units.each do |unit|
       unit.die = true
+      unit.update_prev_position
       unit.action = :none
     end
 

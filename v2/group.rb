@@ -1,5 +1,5 @@
 class Group < UnitTank
-  attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active
+  attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active, :prev
 
   def initialize(primary, require_units, points, id)
     super(points[0][:y], points[0][:x])
@@ -10,6 +10,7 @@ class Group < UnitTank
     self.primary           = primary
     self.active            = false
     self.id                = id
+    self.prev              = false
   end
 
   def finished?
@@ -58,6 +59,13 @@ class Group < UnitTank
   def move(map)
     if (active || required_units?) && next_point
       to_x = to_y = nil
+
+      prev_units = units.select(&:prev)
+      if prev_units.size > 0
+        points.insert(next_point_index, {y: prev_units[0].prev_y, x: prev_units[0].prev_x, wait: true})
+        prev_units.each { |u| u.prev = false }
+      end
+
       if next_point[:enemy_resource]
         resource = map.nearest_unguard_resource(self)
         if resource

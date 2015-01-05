@@ -80,8 +80,9 @@ loop do
       if unit.prev_hp
         enemies = map.near_enemies(unit)
         expect_prev_hp = unit.hp + unit.damage(map, enemies)
-        if unit.prev_hp > expect_prev_hp && unit.y + unit.x >= 158
+        if unit.prev_hp > expect_prev_hp && unit.y + unit.x >= 150
           map.expected_enemy_castle_positions << {y: unit.y, x: unit.x}
+          unit.prev = true if unit.worker?
         end
       end
 
@@ -119,7 +120,7 @@ loop do
       list = if groups.attacker_count < 6
         [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
       else
-        unit_weight = map.bases.size > 1 ? 4 : 6
+        unit_weight = map.bases.size > 1 ? 3 : 5
         [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
       end
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
