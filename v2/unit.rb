@@ -199,6 +199,10 @@ class Unit
     self.instance_of?(Assassin)
   end
 
+  def battler?
+    fighter? || knight? || assassin?
+  end
+
   def finish_work(work_manager)
     work_manager.find(work_id).done!
     self.work_id = nil

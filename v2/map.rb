@@ -39,6 +39,14 @@ class Map < Cell
     map[y][x]
   end
 
+  def enemy_castle_safety?
+    enemy_castle && sight?(enemy_castle.y, enemy_castle.x) && !exists_enemy_battler?(enemy_castle)
+  end
+
+  def exists_enemy_battler?(target)
+    at(target.y, target.x).enemies.any?(&:battler?)
+  end
+
   def set_group(groups)
     groups.each do |group|
       map[group.y][group.x].groups << group

@@ -117,7 +117,7 @@ loop do
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
       end
     else
-      list = if groups.attacker_count < 6
+      list = if groups.attacker_count < 6 || map.enemy_castle_safety?
         [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
       else
         unit_weight = map.bases.size > 1 ? 3 : 5
