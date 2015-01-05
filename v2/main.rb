@@ -100,14 +100,14 @@ loop do
       list = if groups.attacker_count < 10
         [{knight: 1}, {fighter: 1}, {assassin: 1}]
       else
-        unit_weight = groups.attacker_count < 1 ? 2 : (map.bases.size > 1 ? 3 : 4)
+        unit_weight = map.bases.size > 1 ? 3 : 4
         [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
       end
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
     end
   end
 
-  if map.danger_castle?
+  if turn < 250 && map.danger_castle?
     groups.create(6, {worker: 1}, [{x: map.castle.x, y: map.castle.y, wait: true}])
   end
 
@@ -127,7 +127,7 @@ loop do
 
   wish_list.each do |wish|
     if resources_rest >= wish.cost
-      resources_rest -= wish.cost if wish.realize(map)
+      resources_rest -= wish.cost if wish.realize(map, resources_rest, turn)
     else
       break
     end
