@@ -64,9 +64,6 @@ class Unit
     ACTIONS[action]
   end
 
-  def think(map)
-  end
-
   def create_worker
     self.action = :create_worker
   end

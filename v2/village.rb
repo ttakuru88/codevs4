@@ -13,10 +13,4 @@ class Village < Unit
 
     wish_list
   end
-
-  def think(map, all_resources)
-    if map.at(y, x).workers.size < 5 && all_resources >= Worker::RESOURCE
-      self.action = :create_worker
-    end
-  end
 end
