@@ -56,7 +56,7 @@ loop do
 
   if turn == 0
     10.downto(0) do |i|
-      y = i * 9 + 4
+      y = i * 9 + 5
       groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                       {x: map.castle.x, y: y},
                                       {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
