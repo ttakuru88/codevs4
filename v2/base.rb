@@ -15,7 +15,7 @@ class Base < Unit
       end
     else
       worker, min_dist = map.nearest_worker(map.expect_enemy_castle_position)
-      if worker && min_dist <= 40
+      if worker && (min_dist <= 40 || map.expected_enemy_castle_positions.size > 0)
         wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 7, worker)
       end
     end

@@ -1,5 +1,5 @@
 class Map < Cell
-  attr_accessor :map
+  attr_accessor :map, :expected_enemy_castle_positions
 
   def turn_init
     self.enemies = [enemy_castle].compact
@@ -30,6 +30,8 @@ class Map < Cell
         self.map[i][j] = Cell.new(i, j)
       end
     end
+
+    self.expected_enemy_castle_positions = []
   end
 
   def at(y, x)
@@ -40,6 +42,31 @@ class Map < Cell
     groups.each do |group|
       map[group.y][group.x].groups << group
     end
+  end
+
+  def near_units(units, target, dist = 2)
+    units.select do |unit|
+      (target.y - unit.y).abs + (target.x - unit.x).abs <= dist
+    end
+  end
+
+  def near_enemies(target, dist = 2)
+    near_units(enemies, target, dist)
+  end
+
+  def calc_k(unit)
+    k = 0
+    if unit.enemy
+      (-unit.attack_range).upto(unit.attack_range) do |dy|
+         (-(unit.attack_range - dy.abs)).upto(unit.attack_range - dy.abs) do |dx|
+           y = unit.y + dy
+           x = unit.x + dx
+           k += [at(y, x).units.size, 10].min if y >= 0 && x >= 0 && y < 100 && x < 100
+         end
+      end
+    end
+
+    k
   end
 
   def near_worker_factory(y, x)
@@ -117,6 +144,18 @@ class Map < Cell
   def expect_enemy_castle_position
     return enemy_castle if enemy_castle
 
+    if expected_enemy_castle_positions.size > 0
+      position = expected_enemy_castle_positions[0]
+      (position[:y]+10).downto(position[:y]-10) do |py|
+        (position[:x]+10).downto(position[:x]-10) do |px|
+          next if py + px < 158 || py > 99 || px > 99
+
+          cell = at(py, px)
+          return cell unless cell.known
+        end
+      end
+    end
+
     99.downto(60) do |py|
       99.downto(60) do |px|
         next if py + px < 158
@@ -127,7 +166,7 @@ class Map < Cell
     end
   end
 
-  def add_unit(unit)
+  def add_unit(unit, turn)
     cur_unit = find_unit(unit.id)
     if cur_unit
       cur_unit.die = false

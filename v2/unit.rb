@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group, :dx, :dy
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group, :dx, :dy, :prev_hp
 
   # 0: worker
   # 1: knight
@@ -10,8 +10,19 @@ class Unit
   # 6: base
   UNITS = %w(Worker Knight Fighter Assassin Castle Village Base).freeze
   SIGHT = 4.freeze
+  ATTACK_RANGE = 2.freeze
   RESOURCE = nil.freeze
   ACTIONS = {none: -1, up: 'U', down: 'D', left: 'L', right: 'R', create_worker: 0, create_knight: 1, create_fighter: 2, create_assassin: 3, create_village: 5, create_base: 6}
+
+  DAMAGES = [
+    [ 100,  100,  100, 100, 100, 100, 100],
+    [ 100,  500,  200, 200, 200, 200, 200],
+    [ 500, 1600,  500, 200, 200, 200, 200],
+    [1000,  500, 1000, 500, 200, 200, 200],
+    [ 100,  100,  100, 100, 100, 100, 100],
+    [ 100,  100,  100, 100, 100, 100, 100],
+    [ 100,  100,  100, 100, 100, 100, 100],
+  ]
 
   def self.load(input)
     unit = load(input)
@@ -23,6 +34,17 @@ class Unit
     unit = load(input)
     unit.enemy = true
     unit
+  end
+
+  def damage(map, units)
+    dmg = 0
+    units.each do |unit|
+      unit_damage = DAMAGES[UNITS.index(unit.class.to_s)][UNITS.index(self.class.to_s)]
+      k = map.calc_k(unit)
+      dmg += (unit_damage / k.to_f).floor if k > 0
+    end
+
+    dmg
   end
 
   def to_sym
@@ -50,6 +72,7 @@ class Unit
     self.die = false
     self.tasks = []
     self.capturer = false
+    self.prev_hp = nil
   end
 
   def fixed_position?
@@ -125,6 +148,10 @@ class Unit
 
   def sight
     SIGHT
+  end
+
+  def attack_range
+    ATTACK_RANGE
   end
 
   def waiting?

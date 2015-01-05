@@ -33,7 +33,7 @@ loop do
 
   units_count = gets.to_i
   units_count.times do |i|
-    map.add_unit Unit.load(gets)
+    map.add_unit Unit.load(gets), turn
   end
 
   enemies_count = gets.to_i
@@ -74,6 +74,21 @@ loop do
   end
 
   map.die_tmp_villages
+
+  unless map.enemy_castle
+    map.units.each do |unit|
+      if unit.prev_hp
+        enemies = map.near_enemies(unit)
+        expect_prev_hp = unit.hp + unit.damage(map, enemies)
+        if unit.prev_hp > expect_prev_hp && unit.y + unit.x >= 158
+          map.expected_enemy_castle_positions << {y: unit.y, x: unit.x}
+        end
+      end
+
+      unit.prev_hp = unit.hp
+    end
+  end
+
   dead_units = map.clean_dead_units
   groups.clean(dead_units)
   groups.clean_destroyed_group
