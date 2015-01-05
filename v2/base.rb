@@ -3,6 +3,7 @@ class Base < Unit
 
   def self.wishes(map, resources_rest, turn)
     return [] if map.bases.size >= 2 && resources_rest < RESOURCE
+    return [] if map.bases.size >= 3
 
     wish_list = []
 
