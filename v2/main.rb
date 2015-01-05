@@ -1,3 +1,7 @@
+module Settings
+  QUICK_TURN = 275.freeze
+end
+
 %w(wish group_list work work_manager unit_tank group cell map resource unit battler worker knight fighter assassin castle village base).each do |w|
   require "#{__dir__}/#{w}.rb"
 end
@@ -97,17 +101,17 @@ loop do
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
       end
     else
-      list = if groups.attacker_count < 10
-        [{knight: 1}, {fighter: 1}, {assassin: 1}]
+      list = if groups.attacker_count < 6
+        [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
       else
-        unit_weight = map.bases.size > 1 ? 3 : 4
+        unit_weight = map.bases.size > 1 ? 4 : 6
         [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
       end
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
     end
   end
 
-  if turn < 250 && map.danger_castle?
+  if turn < Settings::QUICK_TURN && map.danger_castle?
     groups.create(6, {worker: 1}, [{x: map.castle.x, y: map.castle.y, wait: true}])
   end
 
