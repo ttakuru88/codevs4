@@ -25,10 +25,10 @@ class Group < UnitTank
   end
 
   DP = [
-    {x: -9, y: -9},
-    {x:  9, y: -9},
-    {x: -9, y:  9},
-    {x:  9, y:  9}
+    {x: -6, y: -6},
+    {x:  6, y: -6},
+    {x: -6, y:  6},
+    {x:  6, y:  6}
   ]
 
   MDP = [
@@ -59,12 +59,6 @@ class Group < UnitTank
     if (active || required_units?) && next_point
       to_x = to_y = nil
       if next_point[:enemy_resource]
-        # resource = map.nearest_exists_enemy_resource(self)
-        # if resource
-        #   points.insert(next_point_index, {x: resource.x, y: resource.y})
-        # else
-        #   points.insert(next_point_index, {enemy_castle: true})
-        # end
         resource = map.nearest_unguard_resource(self)
         if resource
           points.insert(next_point_index, {x: resource.x, y: resource.y, wait: true})

@@ -89,10 +89,15 @@ loop do
     next if map.at(base.y, base.x).battler_groups.size > 0
 
     if i == 1 && map.nearest_unguard_resource(base)
-      list = [{knight: 1, fighter: 1, assassin: 1}]
-      groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
+      if rand <= 0.66
+        list = [{knight: 1, fighter: 1, assassin: 1}]
+        groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
+      else
+        list = [{knight: 1, fighter: 1, assassin: 1}]
+        groups.create(7, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
+      end
     else
-      list = if !map.enemy_castle && groups.attacker_count < 5
+      list = if groups.attacker_count < 10
         [{knight: 1}, {fighter: 1}, {assassin: 1}]
       else
         unit_weight = groups.attacker_count < 1 ? 2 : (map.bases.size > 1 ? 3 : 4)
