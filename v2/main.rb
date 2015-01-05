@@ -76,7 +76,7 @@ loop do
   map.die_tmp_villages
 
   unless map.enemy_castle
-    map.units.each do |unit|
+    map.workers.each do |unit|
       if unit.prev_hp
         enemies = map.near_enemies(unit)
         expect_prev_hp = unit.hp + unit.damage(map, enemies)

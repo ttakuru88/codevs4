@@ -146,9 +146,16 @@ class Map < Cell
     return enemy_castle if enemy_castle
 
     if expected_enemy_castle_positions.size > 0
-      position = expected_enemy_castle_positions[0]
-      (position[:y]+10).downto(position[:y]-10) do |py|
-        (position[:x]+10).downto(position[:x]-10) do |px|
+      position = {y: 0, x: 0}
+      expected_enemy_castle_positions.each do |pos|
+        position[:y] += pos[:y]
+        position[:x] += pos[:x]
+      end
+      position[:y] /= expected_enemy_castle_positions.size
+      position[:x] /= expected_enemy_castle_positions.size
+
+      (position[:y]+5).downto(position[:y]-5) do |py|
+        (position[:x]+5).downto(position[:x]-5) do |px|
           next if py + px < 158 || py > 99 || px > 99
 
           cell = at(py, px)
