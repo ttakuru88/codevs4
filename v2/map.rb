@@ -1,5 +1,5 @@
 class Map < Cell
-  attr_accessor :map, :expected_enemy_castle_positions
+  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle
 
   def turn_init
     self.enemies = [enemy_castle].compact
@@ -33,6 +33,7 @@ class Map < Cell
     end
 
     self.expected_enemy_castle_positions = []
+    self.many_attacker_near_enemy_castle = false
   end
 
   def at(y, x)
@@ -43,6 +44,27 @@ class Map < Cell
     enemy_castle && sight?(enemy_castle.y, enemy_castle.x) && !exists_enemy_battler?(enemy_castle)
   end
 
+  def near_enemy_battlers(y, x)
+    list = []
+    sight_count = 1
+
+    (-1).upto(1) do |dy|
+      (-1).upto(1) do |dx|
+        next if dy.abs + dx.abs >= 2
+
+        py = y + dy
+        px = x + dx
+        next if py > 99 || px > 99 || py < 0 || px < 0
+        next unless sight?(py, px)
+
+        list += at(py, px).enemy_battlers
+        sight_count += 1 if at(py, px).enemy_battlers.size > 0
+      end
+    end
+
+    [list, sight_count]
+  end
+
   def exists_enemy_battler?(target)
     at(target.y, target.x).enemies.any?(&:battler?)
   end
@@ -51,6 +73,10 @@ class Map < Cell
     groups.each do |group|
       map[group.y][group.x].groups << group
     end
+  end
+
+  def bottom_right_worker(target)
+    worker = 1
   end
 
   def near_units(units, target, dist = 2)

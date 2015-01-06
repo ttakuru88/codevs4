@@ -40,6 +40,10 @@ class UnitTank
     units.select { |u| u.instance_of?(Fighter) || u.instance_of?(Knight) || u.instance_of?(Assassin) }
   end
 
+  def enemy_battlers
+    enemies.select { |u| u.instance_of?(Fighter) || u.instance_of?(Knight) || u.instance_of?(Assassin) }
+  end
+
   def castle
     @castle ||= units.find { |u| u.instance_of?(Castle) }
   end

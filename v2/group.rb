@@ -26,10 +26,12 @@ class Group < UnitTank
   end
 
   DP = [
-    {x: -6, y: -6},
-    {x:  6, y: -6},
-    {x: -6, y:  6},
-    {x:  6, y:  6}
+#    {x: -6, y: -6},
+#    {x:  6, y: -6},
+#    {x: -6, y:  6},
+#    {x:  6, y:  6}
+    {x: -6, y:  0},
+    {x:  0, y: -6},
   ]
 
   MDP = [
@@ -64,6 +66,14 @@ class Group < UnitTank
       if prev_units.size > 0
         points.insert(next_point_index, {y: prev_units[0].prev_y, x: prev_units[0].prev_x, wait: true})
         prev_units.each { |u| u.prev = false }
+      end
+
+      if next_point[:small] && map.many_attacker_near_enemy_castle
+        if map.nearest_unguard_resource(self)
+          points.insert(next_point_index, {enemy_resource: true})
+        else
+          points.insert(next_point_index, {near_castle: true})
+        end
       end
 
       if next_point[:enemy_resource]

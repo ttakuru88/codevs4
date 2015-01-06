@@ -8,11 +8,14 @@ class Base < Unit
     wish_list = []
 
     if map.bases.size == 1
-      if turn > Settings::QUICK_TURN
-        worker, min_dist = map.nearest_worker(map.at(50, 50))
-        if worker
-          wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 7, worker)
-        end
+      worker, min_dist = map.nearest_worker(map.at(99, 99))
+      if worker
+        wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 7, worker)
+      end
+    elsif map.bases.size == 2
+      worker, min_dist = map.nearest_worker(map.at(50, 50))
+      if worker
+        wish_list << Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 7, worker)
       end
     else
       worker, min_dist = map.nearest_worker(map.expect_enemy_castle_position)

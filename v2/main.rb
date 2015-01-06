@@ -105,10 +105,16 @@ loop do
     end
   end
 
+  if map.enemy_castle && map.sight?(map.enemy_castle.y, map.enemy_castle.x)
+    enemy_battlers, sight_count = map.near_enemy_battlers(map.enemy_castle.y, map.enemy_castle.x)
+
+    map.many_attacker_near_enemy_castle = enemy_battlers.size / sight_count > 5
+  end
+
   map.bases.each_with_index do |base, i|
     next if map.at(base.y, base.x).battler_groups.size > 0
 
-    if i == 1 && map.nearest_unguard_resource(base)
+    if i == 2 && map.nearest_unguard_resource(base)
       if rand <= 0.66
         list = [{knight: 1, fighter: 1, assassin: 1}]
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
@@ -116,13 +122,19 @@ loop do
         list = [{knight: 1, fighter: 1, assassin: 1}]
         groups.create(7, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
       end
-    else
-      list = if groups.attacker_count < 6 || map.enemy_castle_safety?
-        [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
+    elsif i==0
+      if map.enemy_castle_safety?
+        list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
+        primary = 6
       else
-        unit_weight = map.bases.size > 1 ? 3 : 5
-        [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
+        list = [{knight: 3}]
+        primary = 7
       end
+
+      groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}]) unless map.many_attacker_near_enemy_castle
+    else
+      unit_weight = 5
+      list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
     end
   end

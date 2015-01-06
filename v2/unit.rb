@@ -128,18 +128,20 @@ class Unit
     return false
   end
 
+  ESCAPE_DIST = 1
+
   def update_prev_position
     self.prev_y = y
     self.prev_x = x
 
     if action == :up
-      self.prev_y += 1
+      self.prev_y += ESCAPE_DIST
     elsif action == :down
-      self.prev_y -= 1
+      self.prev_y -= ESCAPE_DIST
     elsif action == :right
-      self.prev_x -= 1
+      self.prev_x -= ESCAPE_DIST
     elsif action == :left
-      self.prev_x += 1
+      self.prev_x += ESCAPE_DIST
     end
   end
 
