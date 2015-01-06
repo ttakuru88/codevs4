@@ -84,7 +84,19 @@ class Unit
     # on dead
   end
 
-  def action_number
+  def action_number(map)
+    if map.inverse
+      if action == :up
+        self.action = :down
+      elsif action == :down
+        self.action = :up
+      elsif action == :right
+        self.action = :left
+      elsif action == :left
+        self.action = :right
+      end
+    end
+
     ACTIONS[action]
   end
 
@@ -175,6 +187,11 @@ class Unit
   def waiting?
     task = tasks[0]
     task && task[:type] == :wait
+  end
+
+  def inverse
+    self.x = (x - 99).abs
+    self.y = (y - 99).abs
   end
 
   def enemy?

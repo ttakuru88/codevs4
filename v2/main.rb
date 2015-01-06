@@ -33,12 +33,19 @@ loop do
 
   units_count = gets.to_i
   units_count.times do |i|
-    map.add_unit Unit.load(gets), turn
+    unit = Unit.load(gets)
+    map.inverse = unit.y + unit.x > 100 if unit.castle?
+    unit.inverse if map.inverse
+
+    map.add_unit(unit)
   end
 
   enemies_count = gets.to_i
   enemies_count.times do |i|
-    map.add_enemy Unit.load_enemy(gets)
+    enemy = Unit.load_enemy(gets)
+    enemy.inverse if map.inverse
+
+    map.add_enemy(enemy)
   end
 
   map.standalones.each do |worker|
@@ -47,7 +54,10 @@ loop do
 
   resources_count = gets.to_i
   resources_count.times do |i|
-    resource = map.add_resource(Resource.load(gets))
+    resource = Resource.load(gets)
+    resource.inverse if map.inverse
+
+    resource = map.add_resource(resource)
     if resource
       groups.create(8, {worker: 5}, [{resource: true, x: resource.x, y: resource.y, wait: true}])
     end
@@ -167,6 +177,6 @@ loop do
 
   puts map.active_units.size
   map.active_units.each do |unit|
-    puts "#{unit.id} #{unit.action_number}"
+    puts "#{unit.id} #{unit.action_number(map)}"
   end
 end

@@ -115,7 +115,6 @@ loop do
     end
 
     cell = map.at(resource.y, resource.x)
-    STDERR.puts "#{cell.waiting_capturers.size} #{cell.enemies.size} #{resource.require_worker}"
     if cell.waiting_capturers.size > 0 && cell.enemies.size <= 0 && resource.require_worker < 10
       resource.require_worker += 5
     end

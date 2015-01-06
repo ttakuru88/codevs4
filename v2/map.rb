@@ -1,5 +1,5 @@
 class Map < Cell
-  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle
+  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle, :inverse
 
   def turn_init
     self.enemies = [enemy_castle].compact
@@ -34,6 +34,7 @@ class Map < Cell
 
     self.expected_enemy_castle_positions = []
     self.many_attacker_near_enemy_castle = false
+    self.inverse = false
   end
 
   def at(y, x)
@@ -208,7 +209,7 @@ class Map < Cell
     end
   end
 
-  def add_unit(unit, turn)
+  def add_unit(unit)
     cur_unit = find_unit(unit.id)
     if cur_unit
       cur_unit.die = false

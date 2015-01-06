@@ -17,4 +17,9 @@ class Resource
     self.require_worker = 0
     self.reserved_worker = 0
   end
+
+  def inverse
+    self.x = (x - 99).abs
+    self.y = (y - 99).abs
+  end
 end
