@@ -218,6 +218,10 @@ class Unit
     self.instance_of?(Assassin)
   end
 
+  def base?
+    self.instance_of?(Base)
+  end
+
   def battler?
     fighter? || knight? || assassin?
   end

@@ -230,6 +230,7 @@ class Map < Cell
       unit = cur_unit
     else
       self.units << unit
+      Base.inc_count if unit.base?
     end
 
     cell = at(unit.y, unit.x)

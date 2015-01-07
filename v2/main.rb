@@ -125,7 +125,7 @@ loop do
   end
 
   map.bases.each_with_index do |base, i|
-    next if map.at(base.y, base.x).battler_groups.size > 0
+    next if map.at(base.y, base.x).battler_groups.any? { |g| g.parent == base }
 
     primary = 7
     if base.action_type == :defense && map.nearest_unguard_resource(base)
@@ -142,14 +142,21 @@ loop do
           list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
           primary -= 1
         else
-          list = [{fighter: 2}]
+          list = [{fighter: base.created_groups_count < 5 ? 1 : 2}]
         end
 
         groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}], base) unless map.many_attacker_near_enemy_castle
       end
     else
-      list = if base.created_groups_count <= 0
-        unit_weight = 5
+      list = if base.created_groups_count % 5 == 0
+        benefit = map.benefit_resources
+        unit_weight = if benefit < 15
+          3
+        elsif benefit < 40
+          4
+        else
+          5
+        end
         [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
       else
         [{knight: 3, assassin: 1}, {knight: 4, fighter: 1}]

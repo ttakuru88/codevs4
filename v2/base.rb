@@ -16,8 +16,6 @@ class Base < Unit
     self.action_type = ACTION_TYPES[action_index]
     self.created_groups_count = 0
     self.dead_groups_count = 0
-
-    self.class.inc_count
   end
 
   def self.bases_count
