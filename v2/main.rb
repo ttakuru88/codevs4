@@ -166,6 +166,10 @@ loop do
     end
   end
 
+  if turn >= Settings::QUICK_TURN && map.danger_castle?
+    groups.create(7, {worker: 1}, [{x: map.castle.x, y: map.castle.y, wait: true}])
+  end
+
   groups.resource_groups.each do |group|
     cell = map.at(group.y, group.x)
     resource = cell.resources[0]
