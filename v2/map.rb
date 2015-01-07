@@ -207,6 +207,9 @@ class Map < Cell
         return cell unless cell.known
       end
     end
+
+    STDERR.puts "nil??????"
+    return at((rand * 40).floor + 60, (rand * 40).floor + 60) # FIXME
   end
 
   def add_unit(unit)
