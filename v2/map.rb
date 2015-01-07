@@ -193,6 +193,16 @@ class Map < Cell
         (position[:x]+5).downto(position[:x]-5) do |px|
           next if py + px < 158 || py > 99 || px > 99
 
+          dy = (rand * 3).floor - 1
+          dx = (rand * 3).floor - 1
+
+          py += dy
+          px += dx
+          py = 0 if py < 0
+          px = 0 if px < 0
+          py = 99 if py > 99
+          px = 99 if px > 99
+
           cell = at(py, px)
           return cell unless cell.known
         end
@@ -202,6 +212,16 @@ class Map < Cell
     99.downto(60) do |py|
       99.downto(60) do |px|
         next if py + px < 158
+
+        dy = (rand * 3).floor - 1
+        dx = (rand * 3).floor - 1
+
+        py += dy
+        px += dx
+        py = 0 if py < 0
+        px = 0 if px < 0
+        py = 99 if py > 99
+        px = 99 if px > 99
 
         cell = at(py, px)
         return cell unless cell.known
