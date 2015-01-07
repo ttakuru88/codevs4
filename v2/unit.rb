@@ -12,7 +12,7 @@ class Unit
   SIGHT = 4.freeze
   ATTACK_RANGE = 2.freeze
   RESOURCE = nil.freeze
-  ACTIONS = {none: -1, up: 'U', down: 'D', left: 'L', right: 'R', create_worker: 0, create_knight: 1, create_fighter: 2, create_assassin: 3, create_village: 5, create_base: 6}
+  ACTIONS = {none: -1, up: 'U', down: 'D', left: 'L', right: 'R', create_worker: 0, create_knight: 1, create_fighter: 2, create_assassin: 3, create_village: 5, create_base: 6}.freeze
 
   DAMAGES = [
     [ 100,  100,  100, 100, 100, 100, 100],

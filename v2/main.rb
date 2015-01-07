@@ -25,6 +25,7 @@ loop do
   if prev_stage != stage
     map = Map.new
     groups = GroupList.new
+    Base.reset_count
     save_resources = 0
   end
 
@@ -126,21 +127,21 @@ loop do
   map.bases.each_with_index do |base, i|
     next if map.at(base.y, base.x).battler_groups.size > 0
 
-    if i == 2 && map.nearest_unguard_resource(base)
+    primary = 7
+    if base.action_type == :defense && map.nearest_unguard_resource(base)
       if rand <= 0.66
         list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
+        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
       else
         list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(7, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
+        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
       end
-    elsif i==0
+    elsif base.action_type == :quick
       if map.enemy_castle_safety?
         list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
-        primary = 6
+        primary -= 1
       else
         list = [{fighter: 2}]
-        primary = 7
       end
 
       groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}]) unless map.many_attacker_near_enemy_castle
