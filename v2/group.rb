@@ -234,6 +234,7 @@ class Group < UnitTank
       end
     end
 
-    return false
+
+    return !next_point[:wait] && to_y == y && to_x == x
   end
 end
