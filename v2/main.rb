@@ -146,9 +146,14 @@ loop do
 
       groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}]) unless map.many_attacker_near_enemy_castle
     else
-      unit_weight = 5
-      list = [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
+      list = if base.created_groups_count <= 0
+        unit_weight = 5
+        [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
+      else
+        [{knight: 3, assassin: 1}, {knight: 4, fighter: 1}]
+      end
       groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+      base.created_groups_count += 1
     end
   end
 
