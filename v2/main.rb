@@ -1,5 +1,5 @@
 module Settings
-  QUICK_TURN = 275.freeze
+  QUICK_TURN = 250.freeze
 end
 
 %w(wish group_list work work_manager unit_tank group cell map resource unit battler worker knight fighter assassin castle village base).each do |w|
@@ -12,6 +12,7 @@ map = nil
 stage = nil
 prev_stage = -1
 groups = nil
+save_resources = nil
 
 loop do
   STDOUT.flush
@@ -24,6 +25,7 @@ loop do
   if prev_stage != stage
     map = Map.new
     groups = GroupList.new
+    save_resources = 0
   end
 
   turn           = gets.to_i
@@ -161,6 +163,8 @@ loop do
 
   groups.move(map)
 
+  save_resources += (map.benefit_resources * 0.12).ceil
+
   wish_list = []
   wish_list += groups.wishes
   wish_list += Village.wishes(map)
@@ -168,7 +172,9 @@ loop do
   wish_list = wish_list.shuffle.sort_by(&:primary)
 
   wish_list.each do |wish|
-    if resources_rest >= wish.cost
+    rest = resources_rest
+    rest -= save_resources if (map.bases.size <= 0 || turn < Settings::QUICK_TURN) && wish.type == :create_worker
+    if rest >= wish.cost
       resources_rest -= wish.cost if wish.realize(map, resources_rest, turn)
     else
       break

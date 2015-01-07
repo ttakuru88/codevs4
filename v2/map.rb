@@ -41,6 +41,12 @@ class Map < Cell
     map[y][x]
   end
 
+  def benefit_resources
+    resources.reduce(10) do |sum, resource|
+      sum += at(resource.y, resource.x).workers.size
+    end
+  end
+
   def enemy_castle_safety?
     enemy_castle && sight?(enemy_castle.y, enemy_castle.x) && !exists_enemy_battler?(enemy_castle)
   end
