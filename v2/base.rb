@@ -1,7 +1,7 @@
 class Base < Unit
   RESOURCE = 500.freeze
 
-  attr_accessor :action_type, :created_groups_count
+  attr_accessor :action_type, :created_groups_count, :dead_groups_count
 
   @@bases_count = nil
 
@@ -15,6 +15,7 @@ class Base < Unit
 
     self.action_type = ACTION_TYPES[action_index]
     self.created_groups_count = 0
+    self.dead_groups_count = 0
 
     self.class.inc_count
   end

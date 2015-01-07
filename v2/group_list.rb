@@ -7,8 +7,8 @@ class GroupList
     self.attacker_count = 0
   end
 
-  def create(primary, units, points)
-    group = Group.new(primary, units, points, next_id)
+  def create(primary, units, points, parent = nil)
+    group = Group.new(primary, units, points, next_id, parent)
     self.groups << group
 
     self.next_id += 1
@@ -35,7 +35,14 @@ class GroupList
   end
 
   def clean_destroyed_group
-    self.groups = groups.reject { |g| g.active && g.units.size <= 0 }
+    self.groups = groups.reject do |g|
+      if g.active && g.units.size <= 0
+        g.parent.dead_groups_count += 1 if g.parent
+        true
+      else
+        false
+      end
+    end
   end
 
   def resource_groups

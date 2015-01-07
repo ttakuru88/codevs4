@@ -131,20 +131,22 @@ loop do
     if base.action_type == :defense && map.nearest_unguard_resource(base)
       if rand <= 0.66
         list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}])
+        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}], base)
       else
         list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {near_castle: true}])
+        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {near_castle: true}], base)
       end
     elsif base.action_type == :quick
-      if map.enemy_castle_safety?
-        list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
-        primary -= 1
-      else
-        list = [{fighter: 2}]
-      end
+      if base.dead_groups_count < 5
+        if map.enemy_castle_safety?
+          list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
+          primary -= 1
+        else
+          list = [{fighter: 2}]
+        end
 
-      groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}]) unless map.many_attacker_near_enemy_castle
+        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}], base) unless map.many_attacker_near_enemy_castle
+      end
     else
       list = if base.created_groups_count <= 0
         unit_weight = 5
@@ -152,7 +154,7 @@ loop do
       else
         [{knight: 3, assassin: 1}, {knight: 4, fighter: 1}]
       end
-      groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}])
+      groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}], base)
       base.created_groups_count += 1
     end
   end
