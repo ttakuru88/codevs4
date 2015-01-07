@@ -121,7 +121,7 @@ loop do
   if map.enemy_castle && map.sight?(map.enemy_castle.y, map.enemy_castle.x)
     enemy_battlers, sight_count = map.near_enemy_battlers(map.enemy_castle.y, map.enemy_castle.x)
 
-    map.many_attacker_near_enemy_castle = enemy_battlers.size / sight_count > 5
+    map.many_attacker_near_enemy_castle = (enemy_battlers.size / sight_count > 5) || enemy_battlers.size >= 10
   end
 
   map.bases.each_with_index do |base, i|
