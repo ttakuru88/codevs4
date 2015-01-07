@@ -174,7 +174,7 @@ loop do
 
   groups.move(map)
 
-  save_resources += (map.benefit_resources * 0.12).ceil
+  save_resources += (map.benefit_resources * 0.15).ceil
 
   wish_list = []
   wish_list += groups.wishes
