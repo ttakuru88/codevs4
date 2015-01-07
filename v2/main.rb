@@ -137,7 +137,7 @@ loop do
         list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
         primary = 6
       else
-        list = [{knight: 3}]
+        list = [{fighter: 2}]
         primary = 7
       end
 
