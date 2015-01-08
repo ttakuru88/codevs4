@@ -125,7 +125,12 @@ loop do
   end
 
   map.bases.each_with_index do |base, i|
-    next if map.at(base.y, base.x).battler_groups.any? { |g| g.parent == base }
+    current_group = map.at(base.y, base.x).battler_groups.find { |g| g.parent == base }
+    if current_group
+      current_group.active = true if map.benefit_resources <= 15
+
+      next
+    end
 
     primary = 7
     if base.action_type == :defense && map.nearest_unguard_resource(base)
@@ -151,11 +156,9 @@ loop do
       list = if base.created_groups_count % 5 == 0
         benefit = map.benefit_resources
         unit_weight = if benefit < 15
-          3
-        elsif benefit < 40
           4
         else
-          5
+          6
         end
         [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
       else

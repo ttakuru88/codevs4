@@ -31,10 +31,10 @@ class Group < UnitTank
 #    {x:  6, y: -6},
 #    {x: -6, y:  6},
 #    {x:  6, y:  6}
-    {x: 8, y: 3},
-    {x: -3, y: 8},
-    {x: -8, y: -3},
-    {x: 3, y: -8},
+    {x: 9, y: 4},
+    {x: -4, y: 9},
+    {x: -9, y: -4},
+    {x: 4, y: -9},
   ]
 
   MDP = [
@@ -67,7 +67,9 @@ class Group < UnitTank
 
       prev_units = units.select(&:prev)
       if prev_units.size > 0
-        points.insert(next_point_index, {y: prev_units[0].prev_y, x: prev_units[0].prev_x, wait: true})
+        dy = prev_units[0].y - prev_units[0].prev_y
+        dx = prev_units[0].x - prev_units[0].prev_x
+        points.insert(next_point_index, {y: prev_units[0].y - dy * 3, x: prev_units[0].x - dx * 3, wait: true})
         prev_units.each { |u| u.prev = false }
       end
 
