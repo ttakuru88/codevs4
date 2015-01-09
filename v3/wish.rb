@@ -17,8 +17,6 @@ class Wish
   private
 
   def create_worker(map, resources_rest, turn)
-    return if map.bases.size > 0
-
     near_worker_factory = map.near_worker_factory(y, x)
     if near_worker_factory
       if unit.in_resource? && map.at(unit.y, unit.x).resources[0].exists_enemy

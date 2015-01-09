@@ -22,7 +22,9 @@ loop do
 
   prev_stage = stage
   stage      = gets.to_i
+
   if prev_stage != stage
+    # ゲーム開始時
     map = Map.new
     groups = GroupList.new
     Base.reset_count
@@ -34,6 +36,7 @@ loop do
 
   map.turn_init
 
+  # 味方読み込み
   units_count = gets.to_i
   units_count.times do |i|
     unit = Unit.load(gets)
@@ -43,6 +46,7 @@ loop do
     map.add_unit(unit)
   end
 
+  # 敵読み込み
   enemies_count = gets.to_i
   enemies_count.times do |i|
     enemy = Unit.load_enemy(gets)
@@ -51,10 +55,7 @@ loop do
     map.add_enemy(enemy)
   end
 
-  map.standalones.each do |worker|
-    groups.attach(worker, map)
-  end
-
+  # 資源読み込み
   resources_count = gets.to_i
   resources_count.times do |i|
     resource = Resource.load(gets)
@@ -67,6 +68,7 @@ loop do
   end
   gets
 
+  # マップ全域探索ワーカ予約
   if turn == 0
     10.downto(0) do |i|
       y = i * 9 + 5
@@ -86,8 +88,12 @@ loop do
     end
   end
 
-  map.die_tmp_villages
+  # ニートワーカをグループに紐付け
+  map.standalones.each do |worker|
+    groups.attach(worker, map)
+  end
 
+  # 予測と実際のダメージ差異から敵の城の位置を予測
   unless map.enemy_castle
     map.workers.each do |unit|
       if unit.prev_hp
@@ -103,10 +109,14 @@ loop do
     end
   end
 
+  # 死んだワーカなど不要データの除去
+  map.die_tmp_villages
+
   dead_units = map.clean_dead_units
   groups.clean(dead_units)
   groups.clean_destroyed_group
 
+  # マスにグループヒモ付け
   map.set_group(groups.all)
 
   map.resources.each do |resource|
@@ -118,61 +128,20 @@ loop do
     end
   end
 
+  # 敵城が見えていれば敵城付近に敵がいるかを保存
   if map.enemy_castle && map.sight?(map.enemy_castle.y, map.enemy_castle.x)
     enemy_battlers, sight_count = map.near_enemy_battlers(map.enemy_castle.y, map.enemy_castle.x)
 
     map.many_attacker_near_enemy_castle = (enemy_battlers.size / sight_count > 5) || enemy_battlers.size >= 10
   end
 
+  # 拠点毎の処理
   map.bases.each_with_index do |base, i|
-    current_group = map.at(base.y, base.x).battler_groups.find { |g| g.parent == base }
-    if current_group
-      current_group.active = true if map.benefit_resources <= 15
-
-      next
-    end
-
-    primary = 7
-    if base.action_type == :defense && map.nearest_unguard_resource(base)
-      if rand <= 0.66
-        list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_resource: true}], base)
-      else
-        list = [{knight: 1, fighter: 1, assassin: 1}]
-        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {near_castle: true}], base)
-      end
-    elsif base.action_type == :quick
-      if base.dead_groups_count < 5
-        if map.enemy_castle_safety?
-          list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
-          primary -= 1
-        else
-          list = [{fighter: base.created_groups_count < 5 ? 1 : 2}]
-        end
-
-        groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}], base) unless map.many_attacker_near_enemy_castle
-      end
-    else
-      list = if base.created_groups_count % 5 == 0
-        benefit = map.benefit_resources
-        unit_weight = if benefit < 15
-          4
-        else
-          6
-        end
-        [{knight: 4 * unit_weight, fighter: 3 * unit_weight, assassin: 3 * unit_weight}]
-      else
-        [{knight: 3, assassin: 1}, {knight: 4, fighter: 1}]
-      end
-      groups.create(7, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true}], base)
-      base.created_groups_count += 1
-    end
+    # list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
+    # groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}], base) unless map.many_attacker_near_enemy_castle
   end
 
-  if turn >= Settings::QUICK_TURN && map.danger_castle?
-    groups.create(7, {worker: 1}, [{x: map.castle.x, y: map.castle.y, wait: true}])
-  end
-
+  # 資源地に敵がいるか保存
   groups.resource_groups.each do |group|
     cell = map.at(group.y, group.x)
     resource = cell.resources[0]
@@ -191,7 +160,7 @@ loop do
 
   wish_list.each do |wish|
     rest = resources_rest
-    rest -= save_resources if (map.bases.size <= 0 || turn < Settings::QUICK_TURN) && wish.type == :create_worker
+    rest -= save_resources if map.bases.size <= 0 && wish.type == :create_worker
     if rest >= wish.cost
       resources_rest -= wish.cost if wish.realize(map, resources_rest, turn)
     else
@@ -199,6 +168,7 @@ loop do
     end
   end
 
+  # 出力
   puts map.active_units.size
   map.active_units.each do |unit|
     puts "#{unit.id} #{unit.action_number(map)}"
