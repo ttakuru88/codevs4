@@ -11,7 +11,6 @@ puts 'ttakuru88'
 map = nil
 stage = nil
 prev_stage = -1
-groups = nil
 save_resources = nil
 
 loop do
@@ -26,7 +25,6 @@ loop do
   if prev_stage != stage
     # ゲーム開始時
     map = Map.new
-    groups = GroupList.new
     Base.reset_count
     save_resources = 0
   end
@@ -63,7 +61,7 @@ loop do
 
     resource = map.add_resource(resource)
     if resource
-      groups.create(8, {worker: 5}, [{resource: true, x: resource.x, y: resource.y, wait: true}])
+      map.groups.create(8, {worker: 5}, [{resource: true, x: resource.x, y: resource.y, wait: true}])
     end
   end
   gets
@@ -72,7 +70,7 @@ loop do
   if turn == 0
     10.downto(0) do |i|
       y = i * 9 + 5
-      groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+      map.groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                       {x: map.castle.x, y: y},
                                       {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
     end
@@ -80,7 +78,7 @@ loop do
     x = map.castle.x - 9
     while x >= -4
       px = [0, x].max
-      groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+      map.groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                      {x: px, y: 4},
                                      {x: px, y: 95}, {near_enemy_castle: true, wait: true}])
 
@@ -90,7 +88,7 @@ loop do
 
   # ニートワーカをグループに紐付け
   map.standalones.each do |worker|
-    groups.attach(worker, map)
+    map.groups.attach(worker, map)
   end
 
   # 予測と実際のダメージ差異から敵の城の位置を予測
@@ -113,11 +111,9 @@ loop do
   map.die_tmp_villages
 
   dead_units = map.clean_dead_units
-  groups.clean(dead_units)
-  groups.clean_destroyed_group
 
   # マスにグループヒモ付け
-  map.set_group(groups.all)
+  map.set_groups
 
   map.resources.each do |resource|
     cell = map.at(resource.y, resource.x)
@@ -142,20 +138,20 @@ loop do
   end
 
   # 資源地に敵がいるか保存
-  groups.resource_groups.each do |group|
+  map.groups.resource_groups.each do |group|
     cell = map.at(group.y, group.x)
     resource = cell.resources[0]
     group.primary = (resource.exists_unit && !resource.exists_enemy) ? 7 : 8
   end
 
-  groups.move(map)
+  map.groups.move(map)
 
   save_resources += (map.benefit_resources * 0.15).ceil
 
   wish_list = []
-  wish_list += groups.wishes
   wish_list += Village.wishes(map)
   wish_list += Base.wishes(map, resources_rest, turn)
+  wish_list += map.groups.wishes
   wish_list = wish_list.shuffle.sort_by(&:primary)
 
   wish_list.each do |wish|

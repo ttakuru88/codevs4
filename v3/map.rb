@@ -1,5 +1,5 @@
 class Map < Cell
-  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle, :inverse
+  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle, :inverse, :groups
 
   def turn_init
     self.enemies = [enemy_castle].compact
@@ -35,6 +35,7 @@ class Map < Cell
     self.expected_enemy_castle_positions = []
     self.many_attacker_near_enemy_castle = false
     self.inverse = false
+    self.groups = GroupList.new
   end
 
   def at(y, x)
@@ -76,8 +77,8 @@ class Map < Cell
     at(target.y, target.x).enemies.any?(&:battler?)
   end
 
-  def set_group(groups)
-    groups.each do |group|
+  def set_groups
+    groups.groups.each do |group|
       map[group.y][group.x].groups << group
     end
   end
@@ -346,7 +347,8 @@ class Map < Cell
       unit.die
     end
 
-    dead_units
+    groups.clean(dead_units)
+    groups.clean_destroyed_group
   end
 
   def die_tmp_villages
