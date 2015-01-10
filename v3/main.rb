@@ -53,7 +53,7 @@ loop do
     map.add_enemy(enemy)
   end
 
-  # 資源読み込み
+  # 資源地読み込み
   resources_count = gets.to_i
   resources_count.times do |i|
     resource = Resource.load(gets)
@@ -61,7 +61,8 @@ loop do
 
     resource = map.add_resource(resource)
     if resource
-      map.create_group(:resource_worker, 8, {worker: 5}, [{resource: true, x: resource.x, y: resource.y, wait: true}])
+      map.create_group(:resource_worker, 10, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
+      map.create_group(:resource_guardian, 9, {assassin: 1, fighter: 1, knight: 3}, [{wait_charge: true}, {x: resource.x, y: resource.y, wait: true}])
     end
   end
   gets
@@ -70,7 +71,7 @@ loop do
   if turn == 0
     10.downto(0) do |i|
       y = i * 9 + 5
-      map.create_group(:search_worker, 10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+      map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                       {x: map.castle.x, y: y},
                                       {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
     end
@@ -78,7 +79,7 @@ loop do
     x = map.castle.x - 9
     while x >= -4
       px = [0, x].max
-      map.create_group(:search_worker, 10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+      map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                      {x: px, y: 4},
                                      {x: px, y: 95}, {near_enemy_castle: true, wait: true}])
 
@@ -130,19 +131,13 @@ loop do
 
   # バトラーの設置
   if turn == 0
-    map.create_group(:castle_guardian, 7, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x}], map.castle)
-  end
-
-  # 資源地に敵がいるか保存
-  map.groups.resource_groups.each do |group|
-    cell = map.at(group.y, group.x)
-    resource = cell.resources[0]
-    group.primary = (resource.exists_unit && !resource.exists_enemy) ? 7 : 8
+    map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x}], map.castle)
   end
 
   map.groups.move
 
   save_resources += (map.benefit_resources * 0.15).ceil
+  save_resources = 0 if map.bases.size > 0
 
   wish_list = []
   wish_list += Village.wishes(map)
@@ -152,7 +147,7 @@ loop do
 
   wish_list.each do |wish|
     rest = resources_rest
-    rest -= save_resources if map.bases.size <= 0 && wish.type == :create_worker
+    rest -= save_resources if wish.type == :create_worker
     if rest >= wish.cost
       resources_rest -= wish.cost if wish.realize(map, resources_rest, turn)
     else

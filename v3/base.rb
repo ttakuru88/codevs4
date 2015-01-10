@@ -31,18 +31,17 @@ class Base < Unit
   end
 
   def self.wishes(map, resources_rest, turn)
-    return [] if map.bases.size >= 2 && resources_rest < RESOURCE
+    return [] if map.bases.size <= 0 && turn < 200
+    return [] if map.bases.size >= 1 && resources_rest < RESOURCE
     return [] if map.bases.size >= 3
 
     wish_list = []
 
-    if map.bases.size == 0
-      worker, min_dist = map.nearest_worker(map.castle)
-      if min_dist < 6
-        wish_list << Wish.new(:create_base, Base::RESOURCE, map.castle.y, map.castle.x, 7, worker)
-      else
-        map.groups.create(:base_creator, 7, {worker: 1}, [{y: map.castle.y, x: map.castle.x}])
-      end
+    worker, min_dist = map.nearest_worker(map.castle)
+    if min_dist < 6
+      wish_list << Wish.new(:create_base, Base::RESOURCE, map.castle.y, map.castle.x, 7, worker)
+    else
+      map.groups.create(:base_creator, 7, {worker: 1}, [{y: map.castle.y, x: map.castle.x}])
     end
 
     wish_list
