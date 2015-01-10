@@ -1,10 +1,9 @@
 class GroupList
-  attr_accessor :groups, :next_id, :attacker_count, :map
+  attr_accessor :groups, :next_id, :map
 
   def initialize(map)
     self.groups = []
     self.next_id = 0
-    self.attacker_count = 0
     self.map = map
   end
 
@@ -14,8 +13,6 @@ class GroupList
 
     self.next_id += 1
 
-    self.attacker_count += 1 if group.attacker?
-
     group
   end
 
@@ -24,6 +21,11 @@ class GroupList
     if group
       unit.group = group
       group.units << unit
+
+      if group.units.size == 1 && group.next_point[:wait_charge]
+        group.y = unit.y
+        group.x = unit.x
+      end
     end
   end
 
@@ -54,12 +56,13 @@ class GroupList
     near_group = nil
     min_dist = 101 + 101
 
-    groups.each do |group|
+    groups.shuffle.each do |group|
       next if group.full_units?(unit)
-      next if group.in_resource? && map.at(group.y, group.x).resources[0].exists_enemy
+      next if group.in_resource? && map.at(group.y, group.x).resource.exists_enemy
+      next if near_group && group.primary > near_group.primary
 
       dist = (group.y - unit.y).abs + (group.x - unit.x).abs
-      if dist < min_dist
+      if dist < min_dist || group.primary < near_group.primary
         near_group = group
         min_dist = dist
       end

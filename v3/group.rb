@@ -2,7 +2,9 @@ class Group < UnitTank
   attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active, :prev, :parent, :type
 
   def initialize(type, primary, require_units, points, id, parent)
-    super(points[0][:y], points[0][:x])
+    point = points.find { |pt| pt[:y] && pt[:x] }
+
+    super(point[:y], point[:x])
 
     self.require_units     = require_units
     self.points            = points
@@ -17,10 +19,6 @@ class Group < UnitTank
 
   def finished?
     !next_point
-  end
-
-  def attacker?
-    include_battler? && x + y > 100
   end
 
   def include_battler?
@@ -63,7 +61,11 @@ class Group < UnitTank
   ]
 
   def move(map)
-    if (active || required_units?) && next_point
+    if next_point && next_point[:wait_charge] && required_units?
+      self.next_point_index += 1
+    end
+
+    if next_point && (active || required_units?)
       to_x = to_y = nil
 
       prev_units = units.select(&:prev)
@@ -115,12 +117,14 @@ class Group < UnitTank
 
       self.active = true
 
-      to_y = 99 if to_y > 99
-      to_x = 99 if to_x > 99
-      to_y = 0 if to_y < 0
-      to_x = 0 if to_x < 0
-      if move_to(to_y, to_x, map)
-        self.next_point_index += 1
+      if to_y && to_x
+        to_y = 99 if to_y > 99
+        to_x = 99 if to_x > 99
+        to_y = 0 if to_y < 0
+        to_x = 0 if to_x < 0
+        if move_to(to_y, to_x, map)
+          self.next_point_index += 1
+        end
       end
     end
 
@@ -185,7 +189,7 @@ class Group < UnitTank
   end
 
   def in_resource?
-    !!(next_point && next_point[:resource])
+    !!(next_point && type == :resource_worker && next_point[:wait] == true)
   end
 
   private
@@ -207,7 +211,7 @@ class Group < UnitTank
     end
 
     if dy.nil? && dx.nil?
-      return !next_point[:wait]
+      return !(next_point[:wait])
     end
 
     if dy.nil?

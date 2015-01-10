@@ -1,5 +1,5 @@
 class Map < Cell
-  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle, :inverse, :groups
+  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle, :inverse, :groups, :resources
 
   def turn_init
     self.enemies = [enemy_castle].compact
@@ -11,7 +11,7 @@ class Map < Cell
     end
 
     self.resources.each do |resource|
-      self.map[resource.y][resource.x].resources << resource
+      self.map[resource.y][resource.x].resource = resource
     end
 
     map.each do |line|
@@ -36,6 +36,7 @@ class Map < Cell
     self.many_attacker_near_enemy_castle = false
     self.inverse = false
     self.groups = GroupList.new(self)
+    self.resources = []
   end
 
   def at(y, x)
@@ -359,10 +360,10 @@ class Map < Cell
 
   def add_resource(resource)
     cell = at(resource.y, resource.x)
-    return false if cell.resources.size > 0
+    return false if cell.resource
 
     self.resources << resource
-    at(resource.y, resource.x).resources << resource
+    at(resource.y, resource.x).resource = resource
     resource
   end
 end

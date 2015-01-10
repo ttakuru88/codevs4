@@ -1,22 +1,18 @@
 class Cell < UnitTank
-  attr_accessor :resources, :known, :groups
+  attr_accessor :resource, :known, :groups
 
   def initialize(y, x)
     super
 
-    self.resources = []
-    self.known     = false
-    self.groups    = []
+    self.resource = nil
+    self.known    = false
+    self.groups   = []
   end
 
   def turn_init
     self.units = []
     self.enemies = []
     self.groups = []
-  end
-
-  def noguard_resources
-    resources.select { |r| !r.guardian }
   end
 
   def battler_groups
