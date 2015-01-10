@@ -35,7 +35,7 @@ class Map < Cell
     self.expected_enemy_castle_positions = []
     self.many_attacker_near_enemy_castle = false
     self.inverse = false
-    self.groups = GroupList.new
+    self.groups = GroupList.new(self)
   end
 
   def at(y, x)
@@ -77,10 +77,10 @@ class Map < Cell
     at(target.y, target.x).enemies.any?(&:battler?)
   end
 
-  def set_groups
-    groups.groups.each do |group|
-      map[group.y][group.x].groups << group
-    end
+  def create_group(type, primary, units, points, parent = nil)
+    group = groups.create(type, primary, units, points, parent = nil)
+
+    map[group.y][group.x].groups << group
   end
 
   def bottom_right_worker(target)

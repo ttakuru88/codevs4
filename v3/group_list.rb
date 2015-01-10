@@ -1,14 +1,15 @@
 class GroupList
-  attr_accessor :groups, :next_id, :attacker_count
+  attr_accessor :groups, :next_id, :attacker_count, :map
 
-  def initialize
+  def initialize(map)
     self.groups = []
     self.next_id = 0
     self.attacker_count = 0
+    self.map = map
   end
 
-  def create(primary, units, points, parent = nil)
-    group = Group.new(primary, units, points, next_id, parent)
+  def create(type, primary, units, points, parent = nil)
+    group = Group.new(type, primary, units, points, next_id, parent)
     self.groups << group
 
     self.next_id += 1
@@ -18,8 +19,8 @@ class GroupList
     group
   end
 
-  def attach(unit, map)
-    group = nearest_unfull_group(unit, map)
+  def attach(unit)
+    group = nearest_unfull_group(unit)
     if group
       unit.group = group
       group.units << unit
@@ -49,7 +50,7 @@ class GroupList
     groups.select(&:in_resource?)
   end
 
-  def nearest_unfull_group(unit, map)
+  def nearest_unfull_group(unit)
     near_group = nil
     min_dist = 101 + 101
 
@@ -67,7 +68,7 @@ class GroupList
     near_group
   end
 
-  def move(map)
+  def move
     groups.each { |g| g.move(map) }
   end
 

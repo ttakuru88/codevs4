@@ -41,7 +41,7 @@ class Base < Unit
       if min_dist < 6
         wish_list << Wish.new(:create_base, Base::RESOURCE, map.castle.y, map.castle.x, 7, worker)
       else
-        map.groups.create(7, {worker: 1}, [{y: map.castle.y, x: map.castle.x}])
+        map.groups.create(:base_creator, 7, {worker: 1}, [{y: map.castle.y, x: map.castle.x}])
       end
     end
 

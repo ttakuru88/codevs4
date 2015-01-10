@@ -61,7 +61,7 @@ loop do
 
     resource = map.add_resource(resource)
     if resource
-      map.groups.create(8, {worker: 5}, [{resource: true, x: resource.x, y: resource.y, wait: true}])
+      map.create_group(:resource_worker, 8, {worker: 5}, [{resource: true, x: resource.x, y: resource.y, wait: true}])
     end
   end
   gets
@@ -70,7 +70,7 @@ loop do
   if turn == 0
     10.downto(0) do |i|
       y = i * 9 + 5
-      map.groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+      map.create_group(:search_worker, 10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                       {x: map.castle.x, y: y},
                                       {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
     end
@@ -78,7 +78,7 @@ loop do
     x = map.castle.x - 9
     while x >= -4
       px = [0, x].max
-      map.groups.create(10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+      map.create_group(:search_worker, 10, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                      {x: px, y: 4},
                                      {x: px, y: 95}, {near_enemy_castle: true, wait: true}])
 
@@ -87,8 +87,8 @@ loop do
   end
 
   # ニートワーカをグループに紐付け
-  map.standalones.each do |worker|
-    map.groups.attach(worker, map)
+  map.standalones.each do |unit|
+    map.groups.attach(unit)
   end
 
   # 予測と実際のダメージ差異から敵の城の位置を予測
@@ -112,9 +112,6 @@ loop do
 
   dead_units = map.clean_dead_units
 
-  # マスにグループヒモ付け
-  map.set_groups
-
   map.resources.each do |resource|
     cell = map.at(resource.y, resource.x)
 
@@ -131,10 +128,9 @@ loop do
     map.many_attacker_near_enemy_castle = (enemy_battlers.size / sight_count > 5) || enemy_battlers.size >= 10
   end
 
-  # 拠点毎の処理
-  map.bases.each_with_index do |base, i|
-    # list = [{knight: 3}, {fighter: 2, knight: 1}, {knight: 1, assassin: 1}]
-    # groups.create(primary, list.sample, [{x: base.x, y: base.y}, {enemy_castle: true, small: true}], base) unless map.many_attacker_near_enemy_castle
+  # バトラーの設置
+  if turn == 0
+    map.create_group(:castle_guardian, 7, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x}], map.castle)
   end
 
   # 資源地に敵がいるか保存
@@ -144,7 +140,7 @@ loop do
     group.primary = (resource.exists_unit && !resource.exists_enemy) ? 7 : 8
   end
 
-  map.groups.move(map)
+  map.groups.move
 
   save_resources += (map.benefit_resources * 0.15).ceil
 

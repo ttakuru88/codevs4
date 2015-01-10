@@ -1,7 +1,7 @@
 class Group < UnitTank
-  attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active, :prev, :parent
+  attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active, :prev, :parent, :type
 
-  def initialize(primary, require_units, points, id, parent)
+  def initialize(type, primary, require_units, points, id, parent)
     super(points[0][:y], points[0][:x])
 
     self.require_units     = require_units
@@ -12,6 +12,7 @@ class Group < UnitTank
     self.id                = id
     self.prev              = false
     self.parent            = parent
+    self.type              = type
   end
 
   def finished?
