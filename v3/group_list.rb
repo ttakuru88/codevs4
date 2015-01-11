@@ -56,7 +56,7 @@ class GroupList
     near_group = nil
     min_dist = 101 + 101
 
-    groups.shuffle.each do |group|
+    groups.group_by(&:type).values.sample.each do |group|
       next if group.full_units?(unit)
       next if near_group && group.primary > near_group.primary
 
