@@ -113,7 +113,24 @@ class Map < Cell
     k
   end
 
-  def near_worker_factory(y, x)
+  def nearest_neet_worker_factory(y, x)
+    factory = castle
+    min_dist = (castle.y - y).abs + (castle.x - x).abs
+
+    villages.each do |village|
+      next unless village.free?
+
+      dist = (village.y - y).abs + (village.x - x).abs
+      if dist < min_dist
+        min_dist = dist
+        factory = village
+      end
+    end
+
+    factory
+  end
+
+  def nearest_worker_factory(y, x)
     factory = castle
     min_dist = (castle.y - y).abs + (castle.x - x).abs
 
@@ -155,7 +172,24 @@ class Map < Cell
     [nearest_worker, min_dist]
   end
 
-  def near_battler_factory(y, x)
+  def nearest_neet_battler_factory(y, x)
+    factory = nil
+    min_dist = 101 + 101
+
+    bases.each do |base|
+      next unless base.free?
+
+      dist = (base.y - y).abs + (base.x - x).abs
+      if dist < min_dist
+        min_dist = dist
+        factory = base
+      end
+    end
+
+    factory
+  end
+
+  def nearest_battler_factory(y, x)
     factory = nil
     min_dist = 101 + 101
 

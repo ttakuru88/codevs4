@@ -36,6 +36,10 @@ class Unit
     unit
   end
 
+  def free?
+    action == :none
+  end
+
   def damage(map, units)
     dmg = 0
     units.each do |unit|
@@ -101,6 +105,8 @@ class Unit
   end
 
   def create_worker
+    return if action != :none
+
     self.action = :create_worker
   end
 
@@ -113,14 +119,20 @@ class Unit
   end
 
   def create_fighter
+    return if action != :none
+
     self.action = :create_fighter
   end
 
   def create_knight
+    return if action != :none
+
     self.action = :create_knight
   end
 
   def create_assassin
+    return if action != :none
+
     self.action = :create_assassin
   end
 

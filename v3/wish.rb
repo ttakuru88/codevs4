@@ -17,9 +17,8 @@ class Wish
   private
 
   def create_worker(map, resources_rest, turn)
-    near_worker_factory = map.near_worker_factory(y, x)
-    if near_worker_factory
-      near_worker_factory.create_worker
+    nearest_worker_factory = map.nearest_worker_factory(y, x)
+    if nearest_worker_factory && nearest_worker_factory.create_worker
       true
     else
       false
@@ -27,9 +26,8 @@ class Wish
   end
 
   def create_knight(map, resources_rest, turn)
-    near_factory = map.near_battler_factory(y, x)
-    if near_factory
-      near_factory.create_knight
+    nearest_factory = map.nearest_neet_battler_factory(y, x)
+    if nearest_factory && nearest_factory.create_knight
       true
     else
       false
@@ -37,9 +35,8 @@ class Wish
   end
 
   def create_fighter(map, resources_rest, turn)
-    near_factory = map.near_battler_factory(y, x)
-    if near_factory
-      near_factory.create_fighter
+    nearest_factory = map.nearest_neet_battler_factory(y, x)
+    if nearest_factory && nearest_factory.create_fighter
       true
     else
       false
@@ -47,9 +44,8 @@ class Wish
   end
 
   def create_assassin(map, resources_rest, turn)
-    near_factory = map.near_battler_factory(y, x)
-    if near_factory
-      near_factory.create_assassin
+    nearest_factory = map.nearest_neet_battler_factory(y, x)
+    if nearest_factory && nearest_factory.create_assassin
       true
     else
       false
