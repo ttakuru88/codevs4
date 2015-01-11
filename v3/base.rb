@@ -33,7 +33,7 @@ class Base < Unit
   def self.wishes(map, resources_rest, turn)
     return [] if map.bases.size <= 0 && turn < 200
     return [] if map.bases.size >= 1 && resources_rest < RESOURCE
-    return [] if map.bases.size >= 3
+    return [] if map.bases.size >= Settings::BASE_MAX
 
     wish_list = []
 

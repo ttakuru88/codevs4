@@ -1,5 +1,7 @@
 module Settings
   QUICK_TURN = 250.freeze
+  VILLAGE_MAX = 4.freeze
+  BASE_MAX = 3.freeze
 end
 
 %w(wish group_list work work_manager unit_tank group cell map resource unit battler worker knight fighter assassin castle village base).each do |w|
@@ -132,6 +134,8 @@ loop do
   # バトラーの設置
   if turn == 0
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x}], map.castle)
+
+    map.create_group(:enemy_castle_attacker, 11, {knight: 10, fighter: 5, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
 
   map.groups.move

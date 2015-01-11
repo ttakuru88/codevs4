@@ -5,7 +5,7 @@ class Village < Unit
   def self.wishes(map)
     wish_list = []
     map.workers.each do |worker|
-      if worker.build_village?(map) && map.villages.size < 3
+      if worker.build_village?(map) && map.villages.size < Settings::VILLAGE_MAX
         wish_list << Wish.new(:create_village, Village::RESOURCE, worker.y, worker.x, 8, worker)
         map.units << Village.new([nil, worker.y, worker.x, 1])
       end
