@@ -140,7 +140,7 @@ loop do
 
   map.groups.move
 
-  save_resources += (map.benefit_resources * 0.15).ceil
+  save_resources += (map.benefit_resources * 0.20).ceil
   save_resources = 0 if map.bases.size > 0
 
   wish_list = []

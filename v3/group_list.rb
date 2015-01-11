@@ -56,7 +56,11 @@ class GroupList
     near_group = nil
     min_dist = 101 + 101
 
-    groups.group_by(&:type).values.sample.each do |group|
+    group_list = groups.group_by(&:type).values.map do |groups|
+      groups.reject { |group| group.full_units?(unit) }
+    end
+
+    group_list.sample.each do |group|
       next if group.full_units?(unit)
       next if near_group && group.primary > near_group.primary
 
