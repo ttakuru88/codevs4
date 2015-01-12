@@ -58,7 +58,7 @@ class GroupList
   end
 
   def battler_groups
-    groups.select { |g| g.include_battler? }
+    groups.select(&:include_battler?)
   end
 
   def clean_destroyed_group
@@ -109,14 +109,18 @@ class GroupList
   def wishes
     wish_list = []
 
-    unfinished_groups.each do |group|
+    groups.reject(&:active).select(&:include_battler?).each do |group|
+      wish_list += group.wishes
+    end
+
+    groups.reject(&:include_battler?).each do |group|
       wish_list += group.wishes
     end
 
     wish_list
   end
 
-  def unfinished_groups
-    groups.select { |g| !g.finished? }
+  def inactive_groups
+    groups.reject(&:active)
   end
 end

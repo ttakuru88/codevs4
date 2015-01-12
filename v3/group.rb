@@ -69,8 +69,11 @@ class Group < UnitTank
       self.next_point_index += 1
     end
 
-    if next_point && next_point[:destroy_enemy] && map.sight?(next_point[:y], next_point[:x]) && map.at(next_point[:y], next_point[:x]).enemies.size <= 0
-      self.next_point_index += 1
+    if next_point && next_point[:destroy_enemy]
+      points[next_point_index][:wait] = true
+      if map.sight?(next_point[:y], next_point[:x]) && map.at(next_point[:y], next_point[:x]).enemies.size <= 0
+        self.next_point_index += 1
+      end
     end
 
     if next_point && (active || required_units?)
@@ -194,6 +197,12 @@ class Group < UnitTank
 
   def next_point
     points[next_point_index]
+  end
+
+  def prev_point
+    return nil if next_point_index <= 0
+
+    points[next_point_index - 1]
   end
 
   def clean(clean_units)

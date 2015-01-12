@@ -117,6 +117,7 @@ class Map < Cell
 
     resources.each do |resource|
       next if (resource.exists_unit && !resource.exists_enemy) || groups.resource_guardian_groups_to(at(resource.y, resource.x)).size > 0
+      next if group.prev_point && resource.y == group.prev_point[:y] && resource.x == group.prev_point[:x]
 
       dist = (group.y - resource.y).abs + (group.x - resource.x).abs
       if min_dist > dist
@@ -313,7 +314,7 @@ class Map < Cell
     unit
   end
 
-  def near_villages(y, x, range = 50)
+  def near_villages(y, x, range = 10)
     villages.select { |v| (v.y-y).abs + (v.x-x).abs < range }
   end
 

@@ -1,6 +1,6 @@
 module Settings
   QUICK_TURN = 250.freeze
-  VILLAGE_MAX = 4.freeze
+  VILLAGE_MAX = 6.freeze
   BASE_MAX = 3.freeze
 end
 
@@ -148,12 +148,12 @@ loop do
   if turn == 0
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x}], map.castle)
 
-#    map.create_group(:enemy_castle_attacker, 11, {knight: 10, fighter: 5, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
+    map.create_group(:enemy_castle_attacker, 11, {knight: 15, fighter: 10, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
 
   map.groups.move
 
-  save_resources += (map.benefit_resources * 0.20).ceil
+  save_resources += (map.benefit_resources * 0.15).ceil
   save_resources = 0 if map.bases.size > 0
 
   wish_list = []
