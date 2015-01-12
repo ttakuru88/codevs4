@@ -1,5 +1,5 @@
 class Map < Cell
-  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle, :inverse, :groups, :resources
+  attr_accessor :map, :expected_enemy_castle_positions, :many_attacker_near_enemy_castle, :inverse, :groups, :resources, :unknown_cells
 
   def turn_init
     self.enemies = [enemy_castle].compact
@@ -25,10 +25,11 @@ class Map < Cell
     super(0, 0)
 
     self.map = []
+    self.unknown_cells = []
     100.times do |i|
       self.map[i] = []
       100.times do |j|
-        self.map[i][j] = Cell.new(i, j)
+        self.unknown_cells << self.map[i][j] = Cell.new(i, j)
       end
     end
 
@@ -41,6 +42,21 @@ class Map < Cell
 
   def at(y, x)
     map[y][x]
+  end
+
+  def nearest_unknown_cell(from)
+    unknown_cell = nil
+    min_dist = 101 + 101
+
+    unknown_cells.each do |cell|
+      dist = (cell.y - from.y).abs + (cell.x - from.x).abs
+      if dist < min_dist
+        min_dist = dist
+        unknown_cell = cell
+      end
+    end
+
+    unknown_cell
   end
 
   def benefit_resources
@@ -271,6 +287,10 @@ class Map < Cell
     return at((rand * 40).floor + 60, (rand * 40).floor + 60) # FIXME
   end
 
+  def update_unknown_cells
+    self.unknown_cells = unknown_cells.reject(&:known)
+  end
+
   def add_unit(unit)
     cur_unit = find_unit(unit.id)
     if cur_unit
@@ -338,10 +358,6 @@ class Map < Cell
     end
 
     nearest_resource
-  end
-
-  def unguard_resources
-    resources.reject(&:exists_guardian)
   end
 
   def nearest_exists_enemy_resource(from)

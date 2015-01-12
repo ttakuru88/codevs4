@@ -69,6 +69,13 @@ class Group < UnitTank
       self.next_point_index += 1
     end
 
+    if next_point && next_point[:create_village]
+      points[next_point_index][:wait] = true
+      if map.at(y, x).villages.size > 0
+        self.next_point_index += 1
+      end
+    end
+
     if next_point && next_point[:destroy_enemy]
       points[next_point_index][:wait] = true
       if map.sight?(next_point[:y], next_point[:x]) && map.at(next_point[:y], next_point[:x]).enemies.size <= 0
@@ -95,32 +102,27 @@ class Group < UnitTank
         end
       end
 
-      if next_point[:enemy_resource]
-        resource = map.nearest_unguard_resource(self)
-        if resource
-          insert_task({x: resource.x, y: resource.y, wait: true})
-          resource.exists_guardian = true
-        else
-          insert_task({enemy_castle: true})
-        end
-      end
-
       if next_point[:enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
         to_y = enemy_castle.y
         to_x = enemy_castle.x
+      elsif next_point[:find_resource]
+        nearest_unknown_cell = map.nearest_unknown_cell(self)
+        if nearest_unknown_cell
+          to_y = nearest_unknown_cell.y
+          to_x = nearest_unknown_cell.x
+        else
+          enemy_castle = map.expect_enemy_castle_position
+          to_y = enemy_castle.y
+          to_x = enemy_castle.x
+        end
       elsif next_point[:near_castle]
         to_y = map.castle.y + MDP[id % MDP.size][:y]
         to_x = map.castle.x + MDP[id % MDP.size][:x]
       elsif next_point[:near_enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
-        if enemy_castle
-          to_y = enemy_castle.y + DP[id % DP.size][:x]
-          to_x = enemy_castle.x + DP[id % DP.size][:y]
-        else
-          to_y = y
-          to_x = x
-        end
+        to_y = enemy_castle.y + DP[id % DP.size][:x]
+        to_x = enemy_castle.x + DP[id % DP.size][:y]
       else
         to_y = next_point[:y]
         to_x = next_point[:x]
@@ -217,6 +219,13 @@ class Group < UnitTank
       cost = instance_eval("#{unit_type.to_s[0].upcase}#{unit_type.to_s[1..-1]}")::RESOURCE
       if require_data > send(units_method).size
         wish_list << Wish.new("create_#{unit_type}".to_sym, cost, y, x, primary, self)
+      end
+    end
+
+    if next_point && next_point[:create_village]
+      worker = workers[0]
+      if worker && worker.free?
+        wish_list << Wish.new(:create_village, Village::RESOURCE, y, x, 7, worker)
       end
     end
 

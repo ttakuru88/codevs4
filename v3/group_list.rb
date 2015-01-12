@@ -18,7 +18,7 @@ class GroupList
 
   def attach(unit)
     group = nearest_unfull_group(unit)
-    if group
+    if group && group.next_point
       unit.group = group
       group.units << unit
 
@@ -49,7 +49,7 @@ class GroupList
 
   def free_resource_guardians
     groups.select do |group|
-      group.resource_guardian? && !group.next_point
+      group.resource_guardian? && (!group.next_point || group.next_point[:free])
     end
   end
 

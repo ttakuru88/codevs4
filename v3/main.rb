@@ -13,7 +13,6 @@ puts 'ttakuru88'
 map = nil
 stage = nil
 prev_stage = -1
-save_resources = nil
 
 loop do
   STDOUT.flush
@@ -28,7 +27,6 @@ loop do
     # ゲーム開始時
     map = Map.new
     Base.reset_count
-    save_resources = 0
   end
 
   turn           = gets.to_i
@@ -61,9 +59,17 @@ loop do
     resource = Resource.load(gets)
     resource.inverse if map.inverse
 
-    map.add_resource(resource)
+    resource = map.add_resource(resource)
+    if resource
+      worker, dist = map.nearest_worker(resource)
+
+      worker.group.insert_task({create_village: true})
+      worker.group.insert_task({y: resource.y, x: resource.x})
+    end
   end
   gets
+
+  map.update_unknown_cells
 
   # マップ全域探索ワーカ予約
   if turn == 0
@@ -127,14 +133,18 @@ loop do
     end
 
     if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
-      map.create_group(:resource_worker, 10, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
+      map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
     end
   end
 
   # 資源地防衛グループから1番近い敵がいる資源地をターゲットにする
   map.groups.free_resource_guardians.each do |group|
     resource = map.nearest_enemy_resource(group)
-    group.insert_task({x: resource.x, y: resource.y, destroy_enemy: true}) if resource
+    if resource
+      group.insert_task({x: resource.x, y: resource.y, destroy_enemy: true})
+    elsif !group.next_point || !group.next_point[:find_resource]
+      group.insert_task({find_resource: true, free: true, wait: true})
+    end
   end
 
   # 敵城が見えていれば敵城付近に敵がいるかを保存
@@ -146,26 +156,20 @@ loop do
 
   # バトラーの設置
   if turn == 0
-    map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x}], map.castle)
+    map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
 
     map.create_group(:enemy_castle_attacker, 11, {knight: 15, fighter: 10, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
 
   map.groups.move
 
-  save_resources += (map.benefit_resources * 0.15).ceil
-  save_resources = 0 if map.bases.size > 0
-
   wish_list = []
-  wish_list += Village.wishes(map)
   wish_list += Base.wishes(map, resources_rest, turn)
   wish_list += map.groups.wishes
   wish_list = wish_list.shuffle.sort_by(&:primary)
 
   wish_list.each do |wish|
-    rest = resources_rest
-    rest -= save_resources if wish.type == :create_worker
-    if rest >= wish.cost
+    if resources_rest >= wish.cost
       resources_rest -= wish.cost if wish.realize(map, resources_rest, turn)
     else
       break
