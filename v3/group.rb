@@ -69,7 +69,7 @@ class Group < UnitTank
       self.next_point_index += 1
     end
 
-    if next_point && next_point[:destroy_enemy] && map.sight?(y, x) && map.at(y, x).enemies.size <= 0
+    if next_point && next_point[:destroy_enemy] && map.sight?(next_point[:y], next_point[:x]) && map.at(next_point[:y], next_point[:x]).enemies.size <= 0
       self.next_point_index += 1
     end
 

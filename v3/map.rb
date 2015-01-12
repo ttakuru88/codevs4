@@ -111,6 +111,23 @@ class Map < Cell
     k
   end
 
+  def nearest_enemy_resource(group)
+    nearest_resource = nil
+    min_dist = 101 + 101
+
+    resources.each do |resource|
+      next if (resource.exists_unit && !resource.exists_enemy) || groups.resource_guardian_groups_to(at(resource.y, resource.x)).size > 0
+
+      dist = (group.y - resource.y).abs + (group.x - resource.x).abs
+      if min_dist > dist
+        nearest_resource = resource
+        min_dist = dist
+      end
+    end
+
+    nearest_resource
+  end
+
   def nearest_neet_worker_factory(y, x)
     factory = castle
     min_dist = (castle.y - y).abs + (castle.x - x).abs

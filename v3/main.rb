@@ -114,9 +114,8 @@ loop do
   # 資源地略奪グループを作成し続ける
   base = map.bases[0]
   if base && map.groups.resource_guardians_at(base.y, base.x).size <= 0
-    map.create_group(:resource_guardian, 1, {assassin: 2, fighter: 3, knight: 5}, [{y: base.y, x: base.x, wait_charge: true}])
+    map.create_group(:resource_guardian, 9, {assassin: 2, fighter: 3, knight: 5}, [{y: base.y, x: base.x, wait_charge: true}])
   end
-
 
   # 資源地毎の処理
   map.resources.each do |resource|
@@ -130,12 +129,12 @@ loop do
     if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
       map.create_group(:resource_worker, 10, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
     end
+  end
 
-    if map.groups.resource_guardian_groups_to(cell).size <= 0
-      map.groups.free_resource_guardians.each do |group|
-        group.insert_task({x: resource.x, y: resource.y, destroy_enemy: true})
-      end
-    end
+  # 資源地防衛グループから1番近い敵がいる資源地をターゲットにする
+  map.groups.free_resource_guardians.each do |group|
+    resource = map.nearest_enemy_resource(group)
+    group.insert_task({x: resource.x, y: resource.y, destroy_enemy: true}) if resource
   end
 
   # 敵城が見えていれば敵城付近に敵がいるかを保存
@@ -149,7 +148,7 @@ loop do
   if turn == 0
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x}], map.castle)
 
-    map.create_group(:enemy_castle_attacker, 11, {knight: 10, fighter: 5, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
+#    map.create_group(:enemy_castle_attacker, 11, {knight: 10, fighter: 5, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
 
   map.groups.move
