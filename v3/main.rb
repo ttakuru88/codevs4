@@ -124,7 +124,7 @@ loop do
   dead_units = map.clean_dead_units
 
   # 資源地略奪グループを作成し続ける
-  map.bases.each do |base|
+  map.attacker_bases.each do |base|
     next if map.groups.resource_guardians_at(base.y, base.x).size > 0
 
     list = [{assassin: 1, fighter: 1, knight: 2}]
