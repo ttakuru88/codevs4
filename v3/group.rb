@@ -225,7 +225,7 @@ class Group < UnitTank
     if next_point && next_point[:create_village]
       worker = workers[0]
       if worker && worker.free?
-        wish_list << Wish.new(:create_village, Village::RESOURCE, y, x, 7, worker)
+        wish_list << Wish.new(:create_village, Village::RESOURCE, y, x, 6, worker)
       end
     end
 

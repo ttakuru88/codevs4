@@ -73,7 +73,7 @@ loop do
 
   # マップ全域探索ワーカ予約
   if turn == 0
-    10.downto(0) do |i|
+    0.upto(10) do |i|
       y = i * 9 + 5
       map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                       {x: map.castle.x, y: y},
@@ -89,7 +89,13 @@ loop do
 
       x -= 9
     end
+
+    # バトラーの予約
+    map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
+
+    map.create_group(:enemy_castle_attacker, 11, {knight: 15, fighter: 10, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
+
 
   # ニートワーカをグループに紐付け
   map.standalones.each do |unit|
@@ -124,10 +130,12 @@ loop do
   end
 
   # 資源地毎の処理
+  STDERR.print "#{turn}: "
   map.resources.each do |resource|
     cell = map.at(resource.y, resource.x)
 
     resource.exists_unit = cell.units.size > 0
+    STDERR.print "#{resource.y}:#{resource.x}=#{map.sight?(resource.y, resource.x) ? 1 : 0}:#{cell.enemies.size} "
     if map.sight?(resource.y, resource.x)
       resource.exists_enemy = cell.enemies.size > 0
     end
@@ -136,6 +144,7 @@ loop do
       map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
     end
   end
+  STDERR.puts
 
   # 資源地防衛グループから1番近い敵がいる資源地をターゲットにする
   map.groups.free_resource_guardians.each do |group|
@@ -152,13 +161,6 @@ loop do
     enemy_battlers, sight_count = map.near_enemy_battlers(map.enemy_castle.y, map.enemy_castle.x)
 
     map.many_attacker_near_enemy_castle = (enemy_battlers.size / sight_count > 5) || enemy_battlers.size >= 10
-  end
-
-  # バトラーの設置
-  if turn == 0
-    map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
-
-    map.create_group(:enemy_castle_attacker, 11, {knight: 15, fighter: 10, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
 
   map.groups.move

@@ -18,7 +18,11 @@ class Wish
 
   def create_worker(map, resources_rest, turn)
     nearest_worker_factory = map.nearest_worker_factory(y, x)
-    if nearest_worker_factory && nearest_worker_factory.create_worker
+    return false unless nearest_worker_factory
+
+    cell = map.at(y, x)
+    if !cell.resource || !cell.resource.exists_enemy
+      nearest_worker_factory.create_worker
       true
     else
       false
