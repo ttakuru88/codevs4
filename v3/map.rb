@@ -204,6 +204,23 @@ class Map < Cell
     [nearest_worker, min_dist]
   end
 
+  def nearest_active_worker(target)
+    min_dist = 101 + 101
+    nearest_worker = nil
+
+    workers.each do |worker|
+      next unless worker.group
+
+      dist = (target.y - worker.y).abs + (target.x - worker.x).abs
+      if dist < min_dist
+        min_dist = dist
+        nearest_worker = worker
+      end
+    end
+
+    [nearest_worker, min_dist]
+  end
+
   def nearest_neet_battler_factory(y, x)
     factory = nil
     min_dist = 101 + 101

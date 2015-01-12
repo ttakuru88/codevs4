@@ -61,7 +61,7 @@ loop do
 
     resource = map.add_resource(resource)
     if resource
-      worker, dist = map.nearest_worker(resource)
+      worker, dist = map.nearest_active_worker(resource)
 
       worker.group.insert_task({create_village: true})
       worker.group.insert_task({y: resource.y, x: resource.x})
