@@ -67,4 +67,12 @@ class UnitTank
   def bases
     units.select { |u| u.instance_of?(Base) }
   end
+
+  def defenser_bases
+    bases.select { |base| base.y + base.x < 50 }
+  end
+
+  def attacker_bases
+    bases.select { |base| base.y + base.x > 50 }
+  end
 end

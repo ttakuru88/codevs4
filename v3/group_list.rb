@@ -17,8 +17,8 @@ class GroupList
   end
 
   def attach(unit)
-    group = nearest_unfull_group(unit)
-    if group && group.next_point
+    group, dist = nearest_unfull_group(unit)
+    if group && group.next_point && (unit.worker? || dist < 10)
       unit.group = group
       group.units << unit
 
@@ -38,6 +38,12 @@ class GroupList
   def resource_guardians_at(y, x)
     groups.select do |group|
       group.resource_guardian? && group.y == y && group.x == x
+    end
+  end
+
+  def enemy_castle_attackers_at(y, x)
+    groups.select do |group|
+      group.enemy_castle_attacker? && group.y == y && group.x == x
     end
   end
 
@@ -95,7 +101,7 @@ class GroupList
       end
     end
 
-    near_group
+    [near_group, min_dist]
   end
 
   def move

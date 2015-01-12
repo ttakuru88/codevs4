@@ -167,6 +167,10 @@ class Group < UnitTank
     type == :resource_guardian
   end
 
+  def enemy_castle_attacker?
+    type == :enemy_castle_attacker?
+  end
+
   def to?(cell)
     return false unless next_point
 
