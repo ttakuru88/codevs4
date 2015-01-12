@@ -29,6 +29,30 @@ class GroupList
     end
   end
 
+  def resource_worker_groups_to(cell)
+    groups.select do |group|
+      group.resource_worker? && group.to?(cell)
+    end
+  end
+
+  def resource_guardians_at(y, x)
+    groups.select do |group|
+      group.resource_guardian? && group.y == y && group.x == x
+    end
+  end
+
+  def resource_guardian_groups_to(cell)
+    groups.select do |group|
+      group.resource_guardian? && group.to?(cell)
+    end
+  end
+
+  def free_resource_guardians
+    groups.select do |group|
+      group.resource_guardian? && !group.next_point
+    end
+  end
+
   def all
     groups
   end

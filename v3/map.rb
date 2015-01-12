@@ -4,13 +4,13 @@ class Map < Cell
   def turn_init
     self.enemies = [enemy_castle].compact
 
-    self.units.each do |unit|
+    units.each do |unit|
       unit.die = true
       unit.update_prev_position
       unit.action = :none
     end
 
-    self.resources.each do |resource|
+    resources.each do |resource|
       self.map[resource.y][resource.x].resource = resource
     end
 
@@ -79,9 +79,7 @@ class Map < Cell
   end
 
   def create_group(type, primary, units, points, parent = nil)
-    group = groups.create(type, primary, units, points, parent = nil)
-
-    map[group.y][group.x].groups << group
+    groups.create(type, primary, units, points, parent = nil)
   end
 
   def bottom_right_worker(target)

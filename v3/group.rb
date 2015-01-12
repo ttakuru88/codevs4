@@ -60,8 +60,16 @@ class Group < UnitTank
     {x:  1, y:  1},
   ]
 
+  def insert_task(task)
+    points.insert(next_point_index, task)
+  end
+
   def move(map)
     if next_point && next_point[:wait_charge] && required_units?
+      self.next_point_index += 1
+    end
+
+    if next_point && next_point[:destroy_enemy] && map.sight?(y, x) && map.at(y, x).enemies.size <= 0
       self.next_point_index += 1
     end
 
@@ -72,25 +80,25 @@ class Group < UnitTank
       if prev_units.size > 0
         dy = prev_units[0].y - prev_units[0].prev_y
         dx = prev_units[0].x - prev_units[0].prev_x
-        points.insert(next_point_index, {y: prev_units[0].y - dy * 3, x: prev_units[0].x - dx * 3, wait: true})
+        insert_task({y: prev_units[0].y - dy * 3, x: prev_units[0].x - dx * 3, wait: true})
         prev_units.each { |u| u.prev = false }
       end
 
       if next_point[:small] && map.many_attacker_near_enemy_castle
         if map.nearest_unguard_resource(self)
-          points.insert(next_point_index, {enemy_resource: true})
+          insert_task({enemy_resource: true})
         else
-          points.insert(next_point_index, {near_castle: true})
+          insert_task({near_castle: true})
         end
       end
 
       if next_point[:enemy_resource]
         resource = map.nearest_unguard_resource(self)
         if resource
-          points.insert(next_point_index, {x: resource.x, y: resource.y, wait: true})
+          insert_task({x: resource.x, y: resource.y, wait: true})
           resource.exists_guardian = true
         else
-          points.insert(next_point_index, {enemy_castle: true})
+          insert_task({enemy_castle: true})
         end
       end
 
@@ -144,6 +152,24 @@ class Group < UnitTank
 
       unit.move_to!(y, x, map)
     end
+  end
+
+  def resource_worker?
+    type == :resource_worker
+  end
+
+  def resource_guardian?
+    type == :resource_guardian
+  end
+
+  def to?(cell)
+    return false unless next_point
+
+    next_point_index.upto(points.size - 1).each do |i|
+      return true if points[i][:y] == cell.y && points[i][:x] == cell.x
+    end
+
+    return false
   end
 
   def at_units(on_y, on_x)

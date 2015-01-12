@@ -61,11 +61,7 @@ loop do
     resource = Resource.load(gets)
     resource.inverse if map.inverse
 
-    resource = map.add_resource(resource)
-    if resource
-      map.create_group(:resource_worker, 10, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
-      map.create_group(:resource_guardian, 9, {assassin: 1, fighter: 1, knight: 3}, [{wait_charge: true}, {x: resource.x, y: resource.y, wait: true}])
-    end
+    map.add_resource(resource)
   end
   gets
 
@@ -115,12 +111,30 @@ loop do
 
   dead_units = map.clean_dead_units
 
+  # 資源地略奪グループを作成し続ける
+  base = map.bases[0]
+  if base && map.groups.resource_guardians_at(base.y, base.x).size <= 0
+    map.create_group(:resource_guardian, 1, {assassin: 2, fighter: 3, knight: 5}, [{y: base.y, x: base.x, wait_charge: true}])
+  end
+
+
+  # 資源地毎の処理
   map.resources.each do |resource|
     cell = map.at(resource.y, resource.x)
 
     resource.exists_unit = cell.units.size > 0
     if map.sight?(resource.y, resource.x)
       resource.exists_enemy = cell.enemies.size > 0
+    end
+
+    if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
+      map.create_group(:resource_worker, 10, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
+    end
+
+    if map.groups.resource_guardian_groups_to(cell).size <= 0
+      map.groups.free_resource_guardians.each do |group|
+        group.insert_task({x: resource.x, y: resource.y, destroy_enemy: true})
+      end
     end
   end
 
