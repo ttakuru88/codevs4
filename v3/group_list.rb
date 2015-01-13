@@ -29,6 +29,12 @@ class GroupList
     end
   end
 
+  def clean_tmp_units
+    groups.each do |group|
+      group.units = group.units.select(&:id)
+    end
+  end
+
   def resource_worker_groups_to(cell)
     groups.select do |group|
       group.resource_worker? && group.to?(cell)

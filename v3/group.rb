@@ -1,5 +1,5 @@
 class Group < UnitTank
-  attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active, :prev, :parent, :type
+  attr_accessor :id, :require_units, :points, :next_point_index, :primary, :active, :prev, :parent, :type, :create_village_wisher
 
   def initialize(type, primary, require_units, points, id, parent)
     point = points.find { |pt| pt[:y] && pt[:x] }
@@ -15,6 +15,7 @@ class Group < UnitTank
     self.prev              = false
     self.parent            = parent
     self.type              = type
+    self.create_village_wisher = nil
   end
 
   def finished?
@@ -49,15 +50,10 @@ class Group < UnitTank
   ]
 
   DDP = [
-    {x:  0, y:  0},
-    {x: -1, y:  0},
-    {x:  1, y:  0},
-    {x:  0, y: -1},
-    {x: -1, y: -1},
-    {x:  1, y: -1},
-    {x:  0, y:  1},
-    {x: -1, y:  1},
-    {x:  1, y:  1},
+    {x:  0, y:  0}, {x: -1, y:  0}, {x:  1, y:  0},
+    {x:  0, y: -1}, {x: -1, y: -1}, {x:  1, y: -1},
+    {x:  0, y:  1}, {x: -1, y:  1}, {x:  1, y:  1},
+    {x:  2, y:  0}, {x:  0, y:  2}, {x: -2, y:  0}, {x: 0, y: -2}
   ]
 
   def insert_task(task)
@@ -65,15 +61,10 @@ class Group < UnitTank
   end
 
   def move(map)
+    self.create_village_wisher = nil
+
     if next_point && next_point[:wait_charge] && required_units?
       self.next_point_index += 1
-    end
-
-    if next_point && next_point[:create_village]
-      points[next_point_index][:wait] = true
-      if map.at(y, x).villages.size > 0
-        self.next_point_index += 1
-      end
     end
 
     if next_point && next_point[:destroy_enemy]
@@ -157,6 +148,13 @@ class Group < UnitTank
 
       unit.move_to!(y, x, map)
     end
+
+    if next_point && next_point[:create_village]
+      worker = workers[0]
+      if map.at(y, x).villages.size <= 0 && worker && worker.free? # && worker.y == next_point[:y] && worker.x == next_point[:x]
+        self.create_village_wisher = worker
+      end
+    end
   end
 
   def resource_worker?
@@ -221,16 +219,14 @@ class Group < UnitTank
     require_units.each do |unit_type, require_data|
       units_method = "#{unit_type}s"
       cost = instance_eval("#{unit_type.to_s[0].upcase}#{unit_type.to_s[1..-1]}")::RESOURCE
+
       if require_data > send(units_method).size
         wish_list << Wish.new("create_#{unit_type}".to_sym, cost, y, x, primary, self)
       end
     end
 
-    if next_point && next_point[:create_village]
-      worker = workers[0]
-      if worker && worker.free?
-        wish_list << Wish.new(:create_village, Village::RESOURCE, y, x, 6, worker)
-      end
+    if create_village_wisher
+      wish_list << Wish.new(:create_village, Village::RESOURCE, create_village_wisher.y, create_village_wisher.x, 6, create_village_wisher)
     end
 
     wish_list
@@ -290,7 +286,6 @@ class Group < UnitTank
         end
       end
     end
-
 
     return !next_point[:wait] && to_y == y && to_x == x
   end

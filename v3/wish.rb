@@ -23,6 +23,10 @@ class Wish
     cell = map.at(y, x)
     if !cell.resource || !cell.resource.exists_enemy
       nearest_worker_factory.create_worker
+
+      tmp_worker = Worker.new([nil, y, x, nil])
+      map.groups.attach(tmp_worker)
+
       true
     else
       false

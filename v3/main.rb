@@ -1,3 +1,10 @@
+# bug 拠点がユニット生産し続ける
+# feature 右下のワーカがいない場合に派遣
+# feature 攻撃拠点で貯め打ち
+# 他の場所にワーカを派遣仕様とした時に近くに敵がいるとworkerを無駄に作る場合が？(schewarzとか
+# 資源地が見つけ終えていても、unknownなマスを探してしまう
+#
+
 module Settings
   QUICK_TURN = 250.freeze
   VILLAGE_MAX = 6.freeze
@@ -60,12 +67,6 @@ loop do
     resource.inverse if map.inverse
 
     resource = map.add_resource(resource)
-    if resource
-      worker, dist = map.nearest_active_worker(resource)
-
-      worker.group.insert_task({create_village: true})
-      worker.group.insert_task({y: resource.y, x: resource.x})
-    end
   end
   gets
 
@@ -90,16 +91,7 @@ loop do
       x -= 9
     end
 
-    # バトラーの予約
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
-
-#    map.create_group(:enemy_castle_attacker, 11, {knight: 15, fighter: 10, assassin: 5}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
-  end
-
-
-  # ニートワーカをグループに紐付け
-  map.standalones.each do |unit|
-    map.groups.attach(unit)
   end
 
   # 予測と実際のダメージ差異から敵の城の位置を予測
@@ -116,6 +108,12 @@ loop do
 
       unit.prev_hp = unit.hp
     end
+  end
+
+  # ニートワーカをグループに紐付け
+  map.groups.clean_tmp_units
+  map.standalones.each do |unit|
+    map.groups.attach(unit)
   end
 
   # 死んだワーカなど不要データの除去
@@ -142,7 +140,7 @@ loop do
     end
 
     if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
-      map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true}])
+      map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true, create_village: true}])
     end
   end
 
@@ -159,7 +157,7 @@ loop do
     resource = map.nearest_enemy_resource(group)
     if resource
       group.insert_task({x: resource.x, y: resource.y, destroy_enemy: true})
-    elsif !group.next_point || !group.next_point[:find_resource]
+    elsif map.resources.size < 20 && (!group.next_point || !group.next_point[:find_resource])
       group.insert_task({find_resource: true, free: true, wait: true})
     end
   end
