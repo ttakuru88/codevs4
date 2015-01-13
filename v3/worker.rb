@@ -1,12 +1,16 @@
 class Worker < Unit
   RESOURCE = 40.freeze
 
-  def build_village?(map)
-    near_resources = map.near_resources(y, x)
-    return false if near_resources.size <= 0
-
-    near_resources.all? do |resource|
-      map.near_villages(resource.y, resource.x).size <= 0 && map.near_villages(y, x).size <= 0
+  def think(map, turn, resources_rest)
+    if turn < 10
+      to_x = id % 4 <= 1 ? 0 : 99
+      to_y = id % 4 % 2 == 0 ? 0 : 99
+      move_to(to_y, to_x, map)
+    else
+      cell = map.nearest_unknown_cell(self)
+      if cell
+        move_to!(cell.y, cell.x, map)
+      end
     end
   end
 

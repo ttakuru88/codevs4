@@ -1,5 +1,5 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :capturer, :group, :dx, :dy, :prev_hp, :prev_y, :prev_x, :prev
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :dx, :dy, :prev_hp, :prev_y, :prev_x, :prev
 
   # 0: worker
   # 1: knight
@@ -75,7 +75,6 @@ class Unit
     self.action = :none
     self.die = false
     self.tasks = []
-    self.capturer = false
     self.prev_hp = nil
     self.prev = false
   end

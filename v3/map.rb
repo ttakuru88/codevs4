@@ -44,19 +44,22 @@ class Map < Cell
     map[y][x]
   end
 
-  def nearest_unknown_cell(from)
-    unknown_cell = nil
+  def nearest_unknown_cell(from, random = false)
     min_dist = 101 + 101
+    group_unknown_cells = []
 
     unknown_cells.each do |cell|
       dist = (cell.y - from.y).abs + (cell.x - from.x).abs
+
+      group_unknown_cells[dist] ||= []
+      group_unknown_cells[dist] << cell
       if dist < min_dist
         min_dist = dist
-        unknown_cell = cell
+#        unknown_cell = cell
       end
     end
 
-    unknown_cell
+    group_unknown_cells[min_dist].sample
   end
 
   def benefit_resources
@@ -125,6 +128,13 @@ class Map < Cell
     end
 
     k
+  end
+
+  def viewable_unknown_cells(py, px, sight)
+    unknown_cells.select do |cell|
+      dist = (cell.y - py).abs + (cell.x - px).abs
+      dist <= sight
+    end
   end
 
   def nearest_enemy_resource(group)
@@ -325,15 +335,21 @@ class Map < Cell
     cell = at(unit.y, unit.x)
     cell.units << unit
 
+    show(unit, true)
+
+    unit
+  end
+
+  def show(unit, update_known, update_unknown_list = false)
     (-unit.sight).upto(unit.sight) do |dy|
        (-(unit.sight - dy.abs)).upto(unit.sight - dy.abs) do |dx|
          y = unit.y + dy
          x = unit.x + dx
-         at(y, x).known = true if y >= 0 && x >= 0 && y < 100 && x < 100
+         at(y, x).known = true if update_known && y >= 0 && x >= 0 && y < 100 && x < 100
+
+         self.unknown_cells.delete(at(y, x)) if update_unknown_list
        end
     end
-
-    unit
   end
 
   def danger_castle?

@@ -24,16 +24,8 @@ class UnitTank
     units.select { |u| u.instance_of?(Assassin) }
   end
 
-  def waiting_capturers
-    units.select { |u| u.waiting? && u.capturer }
-  end
-
-  def neet_workers
-    workers.select { |u| !u.group }
-  end
-
   def standalones
-    units.select { |u| (u.worker? || u.knight? || u.fighter? || u.assassin?) && !u.group }
+    units.select { |u| (u.knight? || u.fighter? || u.assassin?) && !u.group }
   end
 
   def battlers

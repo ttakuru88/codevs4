@@ -1,7 +1,3 @@
 class Battler < Unit
-  def initialize(data)
-    super
-
-    self.capturer = rand < 0.3
-  end
+  attr_accessor :group
 end

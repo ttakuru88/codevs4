@@ -1,9 +1,9 @@
-# bug 拠点がユニット生産し続ける
+# bug ワーカを余計に生産する
+# bug 資源地の敵が見えているはずなのにワーカを作り続ける
 # feature 右下のワーカがいない場合に派遣
 # feature 攻撃拠点で貯め打ち
 # 他の場所にワーカを派遣仕様とした時に近くに敵がいるとworkerを無駄に作る場合が？(schewarzとか
-# 資源地が見つけ終えていても、unknownなマスを探してしまう
-#
+# スタンドアロンなワーカを最初の資源地用に散歩させたい
 
 module Settings
   QUICK_TURN = 250.freeze
@@ -72,25 +72,8 @@ loop do
 
   map.update_unknown_cells
 
-  # マップ全域探索ワーカ予約
+  # 自城守る戦闘員
   if turn == 0
-    0.upto(10) do |i|
-      y = i * 9 + 5
-      map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
-                                      {x: map.castle.x, y: y},
-                                      {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
-    end
-
-    x = map.castle.x - 9
-    while x >= -4
-      px = [0, x].max
-      map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
-                                     {x: px, y: 4},
-                                     {x: px, y: 95}, {near_enemy_castle: true, wait: true}])
-
-      x -= 9
-    end
-
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
   end
 
@@ -121,6 +104,11 @@ loop do
 
   dead_units = map.clean_dead_units
 
+  # ワーカ毎の動き
+  map.workers.each do |worker|
+    worker.think(map, turn, resources_rest)
+  end
+
   # 資源地略奪グループを作成し続ける
   map.attacker_bases.each do |base|
     next if map.groups.resource_guardians_at(base.y, base.x).size > 0
@@ -137,10 +125,6 @@ loop do
     resource.exists_unit = cell.units.size > 0
     if map.sight?(resource.y, resource.x)
       resource.exists_enemy = cell.enemies.size > 0
-    end
-
-    if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
-      map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true, create_village: true}])
     end
   end
 
@@ -174,6 +158,7 @@ loop do
   wish_list = []
   wish_list += Base.wishes(map, resources_rest, turn)
   wish_list += map.groups.wishes
+  wish_list += map.castle.wishes(map, turn, resources_rest)
   wish_list = wish_list.shuffle.sort_by(&:primary)
 
   wish_list.each do |wish|

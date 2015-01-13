@@ -18,7 +18,7 @@ class GroupList
 
   def attach(unit)
     group, dist = nearest_unfull_group(unit)
-    if group && group.next_point && (unit.worker? || dist < 10)
+    if group && group.next_point && dist < 10
       unit.group = group
       group.units << unit
 
@@ -32,12 +32,6 @@ class GroupList
   def clean_tmp_units
     groups.each do |group|
       group.units = group.units.select(&:id)
-    end
-  end
-
-  def resource_worker_groups_to(cell)
-    groups.select do |group|
-      group.resource_worker? && group.to?(cell)
     end
   end
 
@@ -82,10 +76,6 @@ class GroupList
         false
       end
     end
-  end
-
-  def resource_groups
-    groups.select(&:in_resource?)
   end
 
   def nearest_unfull_group(unit)

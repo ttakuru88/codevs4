@@ -148,17 +148,6 @@ class Group < UnitTank
 
       unit.move_to!(y, x, map)
     end
-
-    if next_point && next_point[:create_village]
-      worker = workers[0]
-      if map.at(y, x).villages.size <= 0 && worker && worker.free? # && worker.y == next_point[:y] && worker.x == next_point[:x]
-        self.create_village_wisher = worker
-      end
-    end
-  end
-
-  def resource_worker?
-    type == :resource_worker
   end
 
   def resource_guardian?
@@ -230,10 +219,6 @@ class Group < UnitTank
     end
 
     wish_list
-  end
-
-  def in_resource?
-    !!(next_point && type == :resource_worker && next_point[:wait] == true)
   end
 
   private
