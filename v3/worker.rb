@@ -5,10 +5,13 @@ class Worker < Unit
     if turn < 10
       to_x = id % 4 <= 1 ? 0 : 99
       to_y = id % 4 % 2 == 0 ? 0 : 99
-      move_to(to_y, to_x, map)
+      move_to!(to_y, to_x, map)
     else
-      cell = map.nearest_unknown_cell(self)
-      if cell
+      cell, cell_dist = map.nearest_unknown_cell(self)
+      resource, resource_dist = map.nearest_unexists_enemy_resource(self)
+      if resource && (!cell || resource_dist <= cell_dist) && map.workers_at(resource.y, resource.x).size < 5
+        move_to!(resource.y, resource.x, map)
+      elsif cell
         move_to!(cell.y, cell.x, map)
       end
     end

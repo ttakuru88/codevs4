@@ -44,6 +44,10 @@ class Map < Cell
     map[y][x]
   end
 
+  def workers_at(y, x)
+    workers.select { |worker| worker.y == y && worker.x == x }
+  end
+
   def nearest_unknown_cell(from, random = false)
     min_dist = 101 + 101
     group_unknown_cells = []
@@ -55,11 +59,10 @@ class Map < Cell
       group_unknown_cells[dist] << cell
       if dist < min_dist
         min_dist = dist
-#        unknown_cell = cell
       end
     end
 
-    group_unknown_cells[min_dist].sample
+    [group_unknown_cells[min_dist].sample, min_dist]
   end
 
   def benefit_resources
@@ -375,13 +378,13 @@ class Map < Cell
     resources.select { |v| (v.y-y).abs + (v.x-x).abs < range }
   end
 
-  def nearest_unguard_resource(from)
+  def nearest_unexists_enemy_resource(from)
     nearest_resource = nil
     min_dist = 101 + 101
 
-    unguard_resources.each do |resource|
+    resources.each do |resource|
       cell = at(resource.y, resource.x)
-      next if !resource.exists_enemy && resource.exists_unit
+      next if resource.exists_enemy
 
       dist = (from.x - resource.x).abs + (from.y - resource.y).abs
       if min_dist > dist
@@ -390,7 +393,7 @@ class Map < Cell
       end
     end
 
-    nearest_resource
+    [nearest_resource, min_dist]
   end
 
   def nearest_exists_enemy_resource(from)

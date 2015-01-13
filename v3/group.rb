@@ -85,20 +85,12 @@ class Group < UnitTank
         prev_units.each { |u| u.prev = false }
       end
 
-      if next_point[:small] && map.many_attacker_near_enemy_castle
-        if map.nearest_unguard_resource(self)
-          insert_task({enemy_resource: true})
-        else
-          insert_task({near_castle: true})
-        end
-      end
-
       if next_point[:enemy_castle]
         enemy_castle = map.expect_enemy_castle_position
         to_y = enemy_castle.y
         to_x = enemy_castle.x
       elsif next_point[:find_resource]
-        nearest_unknown_cell = map.nearest_unknown_cell(self)
+        nearest_unknown_cell, dist = map.nearest_unknown_cell(self)
         if nearest_unknown_cell
           to_y = nearest_unknown_cell.y
           to_x = nearest_unknown_cell.x
