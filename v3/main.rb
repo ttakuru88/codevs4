@@ -137,6 +137,10 @@ loop do
     if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
       map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true, create_village: true}])
     end
+
+    if resource.exists_enemy
+      map.groups.destroy(map.groups.resource_worker_groups_to(cell))
+    end
   end
 
   # ニートユニットをグループに紐付け

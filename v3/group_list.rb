@@ -84,6 +84,13 @@ class GroupList
     end
   end
 
+  def destroy(destroy_groups)
+    destroy_groups.each do |g|
+      g.units.each { |u| u.group = nil }
+      self.groups.delete(g)
+    end
+  end
+
   def nearest_unfull_group(unit)
     near_group = nil
     min_dist = 101 + 101
