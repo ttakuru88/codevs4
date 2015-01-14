@@ -74,6 +74,24 @@ loop do
 
   # 自城守る戦闘員
   if turn == 0
+    0.upto(12) do |i|
+      y = i * 8 + 4
+      map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+                                      {x: map.castle.x, y: y},
+                                      {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
+    end
+
+    x = map.castle.x - 9
+    while x >= -4
+      px = [0, x].max
+      map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
+                                     {x: map.castle.x, y: 2},
+                                     {x: px, y: 4},
+                                     {x: px, y: 95}, {near_enemy_castle: true, wait: true}])
+
+      x -= 9
+    end
+
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
   end
 
@@ -93,19 +111,18 @@ loop do
     end
   end
 
-  # ニートワーカをグループに紐付け
+  # 死んだワーカなど不要データの除去
   map.groups.clean_tmp_units
   map.standalones.each do |unit|
+    # ニートユニットをグループに紐付け
     map.groups.attach(unit)
   end
 
-  # 死んだワーカなど不要データの除去
   map.die_tmp_villages
-
-  dead_units = map.clean_dead_units
+  map.clean_dead_units
 
   # ワーカ毎の動き
-  map.workers.each do |worker|
+  map.standalone_workers.each do |worker|
     worker.think(map, turn, resources_rest)
   end
 

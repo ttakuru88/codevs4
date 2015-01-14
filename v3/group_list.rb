@@ -18,7 +18,7 @@ class GroupList
 
   def attach(unit)
     group, dist = nearest_unfull_group(unit)
-    if group && group.next_point && dist < 10
+    if group && group.next_point && (unit.worker? || dist < 10)
       unit.group = group
       group.units << unit
 

@@ -1,19 +1,23 @@
 class Worker < Unit
   RESOURCE = 40.freeze
 
+  MOVE_PATTERNS = [
+    {x: 1, y: 0},
+    {x: 0, y: 1},
+    {x: 1, y: 1}
+  ]
+
   def think(map, turn, resources_rest)
     if turn < 10
       to_x = id % 4 <= 1 ? 0 : 99
       to_y = id % 4 % 2 == 0 ? 0 : 99
       move_to!(to_y, to_x, map)
     else
-      cell, cell_dist = map.nearest_unknown_cell(self)
-      resource, resource_dist = map.nearest_unexists_enemy_resource(self)
-      if resource && (!cell || resource_dist <= cell_dist) && map.workers_at(resource.y, resource.x).size < 5
-        move_to!(resource.y, resource.x, map)
-      elsif cell
-        move_to!(cell.y, cell.x, map)
-      end
+      pattern = MOVE_PATTERNS[id % MOVE_PATTERNS.size]
+      dx = rand < 0.5 ? pattern[:x] : 0
+      dy = rand < 0.5 ? pattern[:y] : 0
+
+      move_to!(y + dy, x + dx, map)
     end
   end
 

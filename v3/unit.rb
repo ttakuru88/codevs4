@@ -1,13 +1,7 @@
 class Unit
-  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :dx, :dy, :prev_hp, :prev_y, :prev_x, :prev
+  attr_accessor :id, :y, :x, :hp, :enemy, :action, :die, :work_id, :tasks, :dx, :dy, :prev_hp, :prev_y, :prev_x, :prev, :group
 
-  # 0: worker
-  # 1: knight
-  # 2: fighter
-  # 3: assassin
-  # 4: castle
-  # 5: village
-  # 6: base
+  # {0: worker, 1: knight, 2: fighter, 3: assassin, 4: castle, 5: village, 6: base}
   UNITS = %w(Worker Knight Fighter Assassin Castle Village Base).freeze
   SIGHT = 4.freeze
   ATTACK_RANGE = 2.freeze
@@ -57,6 +51,10 @@ class Unit
 
   def sight?(target_y, target_x)
     (x - target_x).abs + (y - target_y).abs <= sight
+  end
+
+  def standalone?
+    !group
   end
 
   def self.load(input)
@@ -168,11 +166,14 @@ class Unit
     end
   end
 
-  def move_to!(to_y, to_x, map = nil)
+  def move_to!(to_y, to_x, map)
     to_y += dy.to_i
     to_x += dx.to_i
 
     ret = move_to(to_y, to_x, map)
+
+    cur_x = x
+    cur_y = y
 
     if action == :down
       self.y += 1
@@ -182,6 +183,12 @@ class Unit
       self.x += 1
     elsif action == :left
       self.x -= 1
+    end
+
+    if ret
+      map.at(cur_y, cur_x).units.delete(self)
+      STDERR.puts "#{y}:#{x} #{to_y}:#{to_x}" # catch err
+      map.at(y, x).units << self
     end
 
     ret
@@ -231,6 +238,10 @@ class Unit
 
   def base?
     self.instance_of?(Base)
+  end
+
+  def village?
+    self.instance_of?(Village)
   end
 
   def battler?

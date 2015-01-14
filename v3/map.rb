@@ -44,13 +44,10 @@ class Map < Cell
     map[y][x]
   end
 
-  def workers_at(y, x)
-    workers.select { |worker| worker.y == y && worker.x == x }
-  end
-
   def nearest_unknown_cell(from, random = false)
     min_dist = 101 + 101
     group_unknown_cells = []
+    group_unknown_cells[min_dist] = []
 
     unknown_cells.each do |cell|
       dist = (cell.y - from.y).abs + (cell.x - from.x).abs

@@ -9,43 +9,47 @@ class UnitTank
   end
 
   def workers
-    units.select { |u| u.instance_of?(Worker) }
+    units.select(&:worker?)
+  end
+
+  def standalone_workers
+    units.select { |u| u.worker? && u.standalone? }
   end
 
   def fighters
-    units.select { |u| u.instance_of?(Fighter) }
+    units.select(&:fighter?)
   end
 
   def knights
-    units.select { |u| u.instance_of?(Knight) }
+    units.select(&:knight?)
   end
 
   def assassins
-    units.select { |u| u.instance_of?(Assassin) }
+    units.select(&:assassin?)
   end
 
   def standalones
-    units.select { |u| (u.knight? || u.fighter? || u.assassin?) && !u.group }
+    units.select { |u| (u.worker? || u.knight? || u.fighter? || u.assassin?) && u.standalone? }
   end
 
   def battlers
-    units.select { |u| u.instance_of?(Fighter) || u.instance_of?(Knight) || u.instance_of?(Assassin) }
+    units.select { |u| u.fighter? || u.knight? || u.assassin? }
   end
 
   def enemy_battlers
-    enemies.select { |u| u.instance_of?(Fighter) || u.instance_of?(Knight) || u.instance_of?(Assassin) }
+    enemies.select { |u| u.fighter? || u.knight? || u.assassin? }
   end
 
   def castle
-    @castle ||= units.find { |u| u.instance_of?(Castle) }
+    @castle ||= units.find(&:castle?)
   end
 
   def enemy_castle
-    @enemy_castle ||= enemies.find { |u| u.instance_of?(Castle) }
+    @enemy_castle ||= enemies.find(&:castle?)
   end
 
   def villages
-    units.select { |u| u.instance_of?(Village) }
+    units.select(&:village?)
   end
 
   def worker_factories
@@ -57,7 +61,7 @@ class UnitTank
   end
 
   def bases
-    units.select { |u| u.instance_of?(Base) }
+    units.select(&:base?)
   end
 
   def defenser_bases

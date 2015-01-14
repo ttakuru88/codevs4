@@ -5,7 +5,7 @@ class Castle < Unit
   def wishes(map, turn, resources_rest)
     wish_lists = []
 
-    if turn < 100 && map.workers.size < 100
+    if map.workers.size < 100
       wish_lists << Wish.new(:create_worker, Worker::RESOURCE, y, x, 8, self)
     end
 
