@@ -113,18 +113,8 @@ loop do
 
   # 死んだワーカなど不要データの除去
   map.groups.clean_tmp_units
-  map.standalones.each do |unit|
-    # ニートユニットをグループに紐付け
-    map.groups.attach(unit)
-  end
-
   map.die_tmp_villages
   map.clean_dead_units
-
-  # ワーカ毎の動き
-  map.standalone_workers.each do |worker|
-    worker.think(map, turn, resources_rest)
-  end
 
   # 資源地略奪グループを作成し続ける
   map.attacker_bases.each do |base|
@@ -143,6 +133,20 @@ loop do
     if map.sight?(resource.y, resource.x)
       resource.exists_enemy = cell.enemies.size > 0
     end
+
+    if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
+      map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true, create_village: true}])
+    end
+  end
+
+  # ニートユニットをグループに紐付け
+  map.standalones.each do |unit|
+    map.groups.attach(unit)
+  end
+
+  # ワーカ毎の動き
+  map.standalone_workers.each do |worker|
+    worker.think(map, turn, resources_rest)
   end
 
   # 敵城直接攻撃グループ

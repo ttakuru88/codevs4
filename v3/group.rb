@@ -67,6 +67,11 @@ class Group < UnitTank
       self.next_point_index += 1
     end
 
+    if next_point && next_point[:create_village] && map.at(next_point[:y], next_point[:x]).villages.size <= 0
+      worker = workers[0]
+      self.create_village_wisher = worker if worker && worker.free? && worker.y == next_point[:y] && worker.x == next_point[:x]
+    end
+
     if next_point && next_point[:destroy_enemy]
       points[next_point_index][:wait] = true
       if map.sight?(next_point[:y], next_point[:x]) && map.at(next_point[:y], next_point[:x]).enemies.size <= 0
@@ -144,6 +149,10 @@ class Group < UnitTank
 
   def resource_guardian?
     type == :resource_guardian
+  end
+
+  def resource_worker?
+    type == :resource_worker
   end
 
   def enemy_castle_attacker?

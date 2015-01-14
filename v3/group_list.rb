@@ -47,6 +47,12 @@ class GroupList
     end
   end
 
+  def resource_worker_groups_to(cell)
+    groups.select do |group|
+      group.resource_worker? && group.to?(cell)
+    end
+  end
+
   def resource_guardian_groups_to(cell)
     groups.select do |group|
       group.resource_guardian? && group.to?(cell)
