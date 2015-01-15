@@ -393,6 +393,10 @@ class Map < Cell
     [nearest_resource, min_dist]
   end
 
+  def enemy_resources
+    resources.select { |r| r.exists_enemy }
+  end
+
   def nearest_exists_enemy_resource(from)
     nearest_resource = nil
     min_dist = 101 + 101

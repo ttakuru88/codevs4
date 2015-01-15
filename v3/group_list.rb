@@ -65,6 +65,10 @@ class GroupList
     end
   end
 
+  def resource_guardians
+    groups.select(&:resource_guardian?)
+  end
+
   def all
     groups
   end

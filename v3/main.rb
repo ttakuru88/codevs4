@@ -116,12 +116,14 @@ loop do
   map.clean_dead_units
 
   # 資源地略奪グループを作成し続ける
-  map.attacker_bases.each do |base|
-    next if map.groups.resource_guardians_at(base.y, base.x).size > 0
+  if map.groups.resource_guardians.size < 20
+    map.bases.each do |base|
+      next if map.groups.resource_guardians_at(base.y, base.x).size > 0
 
-    list = [{assassin: 1, fighter: 1, knight: 2}]
-    #list = [{assassin: 2, fighter: 3, knight: 5}]
-    map.create_group(:resource_guardian, 9, list.sample, [{y: base.y, x: base.x, wait_charge: true}])
+      list = [{assassin: 1, fighter: 1, knight: 2}]
+      #list = [{assassin: 2, fighter: 3, knight: 5}]
+      map.create_group(:resource_guardian, 9, list.sample, [{y: base.y, x: base.x, wait_charge: true}])
+    end
   end
 
   # 資源地毎の処理
@@ -156,7 +158,8 @@ loop do
   map.attacker_bases.each do |base|
     next if map.groups.enemy_castle_attackers_at(base.y, base.x).size > 0
 
-    list = [{assassin: 1}, {fighter: 1}, {knight: 1}]
+    weight = 3
+    list = [{assassin: 2 * weight, fighter: 3 * weight, knight: 5 * weight}]
     map.create_group(:enemy_castle_attacker, 9, list.sample, [{y: base.y, x: base.x}, {enemy_castle: true}], base)
   end
 
