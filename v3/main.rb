@@ -113,7 +113,6 @@ loop do
 
   # 死んだワーカなど不要データの除去
   map.groups.clean_tmp_units
-  map.die_tmp_villages
   map.clean_dead_units
 
   # 資源地略奪グループを作成し続ける
@@ -184,6 +183,7 @@ loop do
   wish_list += Base.wishes(map, resources_rest, turn)
   wish_list += map.groups.wishes
   wish_list += map.castle.wishes(map, turn, resources_rest)
+  wish_list += map.free_worker_wishes
   wish_list = wish_list.shuffle.sort_by(&:primary)
 
   wish_list.each do |wish|

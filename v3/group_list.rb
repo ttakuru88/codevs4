@@ -99,7 +99,10 @@ class GroupList
       groups.reject { |group| group.full_units?(unit) }
     end
 
-    group_list.sample.each do |group|
+    groups = group_list.sample
+    return [nil, min_dist] unless groups
+
+    groups.each do |group|
       next if group.full_units?(unit)
       next if near_group && group.primary > near_group.primary
 

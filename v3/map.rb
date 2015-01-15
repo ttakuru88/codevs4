@@ -431,6 +431,33 @@ class Map < Cell
     worker
   end
 
+  def free_worker_wishes
+    return [] if workers.size >= 100 || resources.size >= 20
+
+    max_x = 0
+    max_y = 0
+    max_x_village = nil
+    max_y_village = nil
+    wishes = []
+
+    villages.each do |village|
+      if village.x > max_x
+        max_x = village.x
+        max_x_village = village
+      end
+
+      if village.y > max_y
+        max_y = village.y
+        max_y_village = village
+      end
+    end
+
+    wishes << Wish.new(:create_worker, Worker::RESOURCE, max_x_village.y, max_x_village.x, 9, max_x_village) if max_x_village
+    wishes << Wish.new(:create_worker, Worker::RESOURCE, max_y_village.y, max_y_village.x, 9, max_y_village) if max_y_village
+
+    wishes
+  end
+
   def find_unit(unit_id)
     units.find { |u| u.id == unit_id }
   end
@@ -449,12 +476,6 @@ class Map < Cell
 
     groups.clean(dead_units)
     groups.clean_destroyed_group
-  end
-
-  def die_tmp_villages
-    villages.each do |village|
-      village.die = true if village.id == nil
-    end
   end
 
   def add_resource(resource)

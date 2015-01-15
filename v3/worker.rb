@@ -2,9 +2,11 @@ class Worker < Unit
   RESOURCE = 40.freeze
 
   MOVE_PATTERNS = [
-    {x: 1, y: 0},
-    {x: 0, y: 1},
-    {x: 1, y: 1}
+    {x:  1, y:  0},
+    {x:  0, y:  1},
+    {x:  1, y:  1},
+    {x:  1, y: -1},
+    {x: -1, y:  1},
   ]
 
   def think(map, turn, resources_rest)
@@ -13,12 +15,24 @@ class Worker < Unit
       to_y = id % 4 % 2 == 0 ? 0 : 99
       move_to!(to_y, to_x, map)
     else
-      pattern = MOVE_PATTERNS[id % MOVE_PATTERNS.size]
-      dx = rand < 0.5 ? pattern[:x] : 0
-      dy = rand < 0.5 ? pattern[:y] : 0
-
-      move_to!(y + dy, x + dx, map)
+      if map.resources.size < 20
+        cell, cell_dist = map.nearest_unknown_cell(self)
+        if cell
+          move_to!(cell.y, cell.x, map)
+        else
+          free_work(map)
+        end
+      else
+        free_work(map)
+      end
     end
+  end
+
+  def free_work(map)
+    pattern = MOVE_PATTERNS[id % MOVE_PATTERNS.size]
+    dx = rand < 0.5 ? pattern[:x] : 0
+    dy = rand < 0.5 ? pattern[:y] : 0
+    move_to!(y + dy, x + dx, map)
   end
 
   def move_to(to_y, to_x, map = nil)
