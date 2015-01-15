@@ -145,6 +145,10 @@ class Group < UnitTank
 
       unit.move_to!(y, x, map)
     end
+
+    if next_point && next_point[:release]
+      map.groups.destroy([self])
+    end
   end
 
   def resource_guardian?

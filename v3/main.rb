@@ -74,11 +74,11 @@ loop do
 
   # 自城守る戦闘員
   if turn == 0
-    0.upto(12) do |i|
-      y = i * 8 + 4
+    0.upto(5) do |i|
+      y = i * 9 + 4
       map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                       {x: map.castle.x, y: y},
-                                      {x: 99, y: y}, {near_enemy_castle: true, wait: true}])
+                                      {x: 50, y: y}, {release: true}])
     end
 
     x = map.castle.x - 9
@@ -87,7 +87,7 @@ loop do
       map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                      {x: map.castle.x, y: 2},
                                      {x: px, y: 4},
-                                     {x: px, y: 95}, {near_enemy_castle: true, wait: true}])
+                                     {x: px, y: 50}, {release: true}])
 
       x -= 9
     end
@@ -135,7 +135,7 @@ loop do
     end
 
     if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
-      map.create_group(:resource_worker, 7, {worker: 5}, [{x: resource.x, y: resource.y, wait: true, create_village: true}])
+      map.create_group(:resource_worker, 9, {worker: 5}, [{x: resource.x, y: resource.y, wait: true, create_village: true}])
     end
 
     if resource.exists_enemy

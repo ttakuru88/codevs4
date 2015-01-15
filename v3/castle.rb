@@ -6,7 +6,7 @@ class Castle < Unit
     wish_lists = []
 
     if map.villages.size <= 0
-      wish_lists << Wish.new(:create_worker, Worker::RESOURCE, y, x, 8, self)
+      wish_lists << Wish.new(:create_worker, Worker::RESOURCE, y, x, 9, self)
     end
 
     wish_lists
