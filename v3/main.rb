@@ -120,7 +120,7 @@ loop do
     map.bases.each do |base|
       next if map.groups.resource_guardians_at(base.y, base.x).size > 0
 
-      list = [{assassin: 1, fighter: 1, knight: 2}]
+      list = [{assassin: 1, fighter: 2, knight: 4}]
       #list = [{assassin: 2, fighter: 3, knight: 5}]
       map.create_group(:resource_guardian, 9, list.sample, [{y: base.y, x: base.x, wait_charge: true}])
     end
@@ -155,10 +155,11 @@ loop do
   end
 
   # 敵城直接攻撃グループ
-  map.attacker_bases.each do |base|
+  bases = map.benefit_resources >= 90 ? map.bases : map.attacker_bases
+  bases.each do |base|
     next if map.groups.enemy_castle_attackers_at(base.y, base.x).size > 0
 
-    weight = 3
+    weight = 5
     list = [{assassin: 2 * weight, fighter: 3 * weight, knight: 5 * weight}]
     map.create_group(:enemy_castle_attacker, 9, list.sample, [{y: base.y, x: base.x}, {enemy_castle: true}], base)
   end
