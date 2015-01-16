@@ -76,24 +76,25 @@ loop do
   if turn == 0
     0.upto(5) do |i|
       y = i * 9 + 4
+      last_task = rand < 0.5 ? {release: true} : {near_enemy_castle: true}
       map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                       {x: map.castle.x, y: y},
-                                      {x: 50, y: y}, {release: true}])
+                                      {x: 50, y: y}, last_task])
     end
 
     x = map.castle.x - 9
     while x >= -4
+      last_task = rand < 0.5 ? {release: true} : {near_enemy_castle: true}
       px = [0, x].max
       map.create_group(:search_worker, 8, {worker: 1}, [{x: map.castle.x, y: map.castle.y},
                                      {x: map.castle.x, y: 2},
                                      {x: px, y: 4},
-                                     {x: px, y: 50}, {release: true}])
+                                     {x: px, y: 50}, last_task])
 
       x -= 9
     end
 
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
-    map.create_group(:enemy_castle_attacker, 9, {knight: 20, fighter: 15, assassin: 10}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
 
   # 予測と実際のダメージ差異から敵の城の位置を予測
@@ -117,8 +118,8 @@ loop do
   map.clean_dead_units
 
   # 資源地略奪グループを作成し続ける
-  if map.groups.resource_guardians.size < 20
-    map.bases.each do |base|
+  if map.groups.resource_guardians.size < 20 && map.benefit_resources < 90
+    map.defenser_bases.each do |base|
       next if map.groups.resource_guardians_at(base.y, base.x).size > 0
 
       list = [{assassin: 1, fighter: 2, knight: 4}]
