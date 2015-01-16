@@ -133,13 +133,14 @@ loop do
     resource.exists_unit = cell.units.size > 0
     if map.sight?(resource.y, resource.x)
       resource.exists_enemy = cell.enemies.size > 0
+      resource.exists_enemy_battler = cell.enemy_battlers.size > 0
     end
 
     if !resource.exists_enemy && map.groups.resource_worker_groups_to(cell).size <= 0
       map.create_group(:resource_worker, 9, {worker: 5}, [{x: resource.x, y: resource.y, wait: true, create_village: true}])
     end
 
-    if resource.exists_enemy
+    if resource.exists_enemy_battler
       map.groups.destroy(map.groups.resource_worker_groups_to(cell))
     end
   end

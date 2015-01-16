@@ -160,7 +160,7 @@ class Group < UnitTank
   end
 
   def enemy_castle_attacker?
-    type == :enemy_castle_attacker?
+    type == :enemy_castle_attacker
   end
 
   def to?(cell)
@@ -220,7 +220,7 @@ class Group < UnitTank
     end
 
     if create_village_wisher
-      wish_list << Wish.new(:create_village, Village::RESOURCE, create_village_wisher.y, create_village_wisher.x, 6, create_village_wisher)
+      wish_list << Wish.new(:create_village, Village::RESOURCE, create_village_wisher.y, create_village_wisher.x, 9, create_village_wisher)
     end
 
     wish_list
