@@ -93,6 +93,7 @@ loop do
     end
 
     map.create_group(:castle_guardian, 9, {knight: 40, fighter: 30, assassin: 20}, [{y: map.castle.y, x: map.castle.x, wait: true}], map.castle)
+    map.create_group(:enemy_castle_attacker, 9, {knight: 20, fighter: 15, assassin: 10}, [{y: map.castle.y, x: map.castle.x}, {enemy_castle: true}], map.castle)
   end
 
   # 予測と実際のダメージ差異から敵の城の位置を予測

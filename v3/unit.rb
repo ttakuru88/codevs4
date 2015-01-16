@@ -7,6 +7,7 @@ class Unit
   ATTACK_RANGE = 2.freeze
   RESOURCE = nil.freeze
   ACTIONS = {none: -1, up: 'U', down: 'D', left: 'L', right: 'R', create_worker: 0, create_knight: 1, create_fighter: 2, create_assassin: 3, create_village: 5, create_base: 6}.freeze
+  MAX_HP = 0.0
 
   DAMAGES = [
     [ 100,  100,  100, 100, 100, 100, 100],
@@ -187,11 +188,19 @@ class Unit
 
     if ret
       map.at(cur_y, cur_x).units.delete(self)
-      STDERR.puts "#{y}:#{x} #{to_y}:#{to_x}" # catch err
+#      STDERR.puts "#{y}:#{x} #{to_y}:#{to_x}" # catch err
       map.at(y, x).units << self
     end
 
     ret
+  end
+
+  def fatal?
+    healthy < 0.5
+  end
+
+  def healthy
+    hp / MAX_HP
   end
 
   def sight

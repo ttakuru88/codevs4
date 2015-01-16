@@ -1,5 +1,6 @@
 class Worker < Unit
   RESOURCE = 40.freeze
+  MAX_HP = 2000.0
 
   MOVE_PATTERNS = [
     {x:  1, y:  0},

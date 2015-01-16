@@ -74,7 +74,8 @@ class Group < UnitTank
 
     if next_point && next_point[:destroy_enemy]
       points[next_point_index][:wait] = true
-      if map.sight?(next_point[:y], next_point[:x]) && map.at(next_point[:y], next_point[:x]).enemies.size <= 0
+      cell = map.at(next_point[:y], next_point[:x])
+      if map.sight?(next_point[:y], next_point[:x]) && cell.enemies.size <= 0
         self.next_point_index += 1
       end
     end
@@ -183,7 +184,7 @@ class Group < UnitTank
     require_unit = require_units.find { |unit_type, data| unit_type == unit.to_sym }
     return true unless require_unit
 
-    require_unit[1] <= send("#{unit.to_sym}s").size
+    require_unit[1] <= send("#{unit.to_sym}s").size - send("fatal_#{unit.to_sym}s").size
   end
 
   def required_units?
@@ -214,7 +215,7 @@ class Group < UnitTank
       units_method = "#{unit_type}s"
       cost = instance_eval("#{unit_type.to_s[0].upcase}#{unit_type.to_s[1..-1]}")::RESOURCE
 
-      if require_data > send(units_method).size
+      if require_data > send(units_method).size - send("fatal_#{units_method}").size
         wish_list << Wish.new("create_#{unit_type}".to_sym, cost, y, x, primary, self)
       end
     end

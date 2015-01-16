@@ -1,5 +1,6 @@
 class Base < Unit
   RESOURCE = 500.freeze
+  MAX_HP = 20000.0
 
   attr_accessor :action_type, :created_groups_count, :dead_groups_count
 
@@ -36,7 +37,7 @@ class Base < Unit
 
     if map.defenser_bases.size > 0 && map.attacker_bases.size <= 0
       worker, min_dist = map.nearest_worker(map.at(99, 99))
-      if worker && min_dist <= 40
+      if worker && min_dist <= 60
         return [Wish.new(:create_base, Base::RESOURCE, worker.y, worker.x, 6, worker)]
       end
     end

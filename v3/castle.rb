@@ -1,6 +1,7 @@
 class Castle < Unit
   SIGHT = 10.freeze
   ATTACK_RANGE = 10.freeze
+  MAX_HP = 50000.0
 
   def wishes(map, turn, resources_rest)
     wish_lists = []

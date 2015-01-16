@@ -72,6 +72,25 @@ class Map < Cell
     enemy_castle && sight?(enemy_castle.y, enemy_castle.x) && !exists_enemy_battler?(enemy_castle)
   end
 
+  def sight_near_enemy?(y, x, sight = 4)
+    sight_count = 0
+
+    (-sight).upto(sight) do |dy|
+      (-sight).upto(sight) do |dx|
+        px = x + dx
+        py = y + dy
+        next if px < 0 || py < 0 || px > 99 || py > 99
+
+        if sight?(py, px)
+          sight_count += 1
+          return true if at(py, px).enemies.size > 0
+        end
+      end
+    end
+
+    sight_count <= 0
+  end
+
   def near_enemy_battlers(y, x)
     list = []
     sight_count = 1

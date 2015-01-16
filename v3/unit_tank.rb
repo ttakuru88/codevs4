@@ -71,4 +71,20 @@ class UnitTank
   def attacker_bases
     bases.select { |base| base.y + base.x > 50 }
   end
+
+  def fatal_workers
+    workers.select(&:fatal?)
+  end
+
+  def fatal_assassins
+    assassins.select(&:fatal?)
+  end
+
+  def fatal_knights
+    knights.select(&:fatal?)
+  end
+
+  def fatal_fighters
+    fighters.select(&:fatal?)
+  end
 end
